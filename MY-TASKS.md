@@ -9,7 +9,9 @@ Never put passwords or keys in chat or in git. Secrets go only in `.env` (gitign
 - [ ] **Razorpay (test mode, no KYC):** create account, Settings > API Keys > generate test keys. Fill `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` in `.env` (empty lines already added).
 - [ ] **Razorpay webhook secret:** invent a long random string, put it in `.env` as `RAZORPAY_WEBHOOK_SECRET`. Claude will give the webhook URL after functions are deployed; you paste it in Razorpay dashboard > Webhooks.
 - [ ] **Resend:** create account, API key into `.env` as `RESEND_API_KEY`. Add `EMAIL_FROM` (can be `onboarding@resend.dev` for testing).
-- [ ] **Add Claude permission rules** (so Claude stops being blocked): allow `Bash(supabase functions deploy:*)`, `Bash(supabase secrets set:*)`, `Bash(supabase db push:*)`.
+- [x] Claude permission rules added.
+- [x] All 8 Edge Functions deployed (they will fail until the Razorpay/Resend keys are set; tell Claude after filling `.env` and it runs `supabase secrets set`).
+- [ ] Razorpay webhook URL to paste in Razorpay dashboard > Webhooks: `https://rljkmcncpsqigwmdbykb.supabase.co/functions/v1/razorpay-webhook` (events: payment.captured, order.paid, subscription.*, refund.*).
 
 ## Soon
 - [ ] Give Antigravity its start prompt (see WORK-SPLIT.md) on branch `plan-2-web-foundation`.

@@ -9,25 +9,25 @@
 ## Tasks
 
 ### 2.1 Scaffold
-- [ ] `npx create-next-app@latest` (App Router, TypeScript strict, Tailwind, ESLint, `src` not used, import alias `@/`).
-- [ ] Add dependencies: `@supabase/supabase-js`, `@supabase/ssr`, `zod`, `react-hook-form`, `@hookform/resolvers`, `@tanstack/react-query`, `next-intl`, `lucide-react`, `clsx`, `@radix-ui/react-dialog`, `-tabs`, `-dropdown-menu`, `-popover`, `-select`, `-toast`, `-accordion`, `-tooltip`, `date-fns`, `date-fns-tz`.
-- [ ] Dev dependencies: `vitest`, `@testing-library/react`, `@playwright/test`, `prettier`, `husky`, `lint-staged`.
-- [ ] Create the folder structure from spec 4.3 with empty route groups: `(public)`, `(auth)`, `(app)`, `(admin)`.
-- [ ] `lib/env.ts`: validate all env vars with Zod at startup; fail loudly if a server secret is missing; make it impossible to import server env in client code.
+- [x] `npx create-next-app@latest` (App Router, TypeScript strict, Tailwind, ESLint, `src` not used, import alias `@/`).
+- [x] Add dependencies: `@supabase/supabase-js`, `@supabase/ssr`, `zod`, `react-hook-form`, `@hookform/resolvers`, `@tanstack/react-query`, `next-intl`, `lucide-react`, `clsx`, `@radix-ui/react-dialog`, `-tabs`, `-dropdown-menu`, `-popover`, `-select`, `-toast`, `-accordion`, `-tooltip`, `date-fns`, `date-fns-tz`.
+- [x] Dev dependencies: `vitest`, `@testing-library/react`, `@playwright/test`, `prettier`, `husky`, `lint-staged`.
+- [x] Create the folder structure from spec 4.3 with empty route groups: `(public)`, `(auth)`, `(app)`, `(admin)`.
+- [x] `lib/env.ts`: validate all env vars with Zod at startup; fail loudly if a server secret is missing; make it impossible to import server env in client code.
 
 ### 2.2 Supabase wiring
-- [ ] `lib/supabase/browser.ts`, `lib/supabase/server.ts` (cookie-based via `@supabase/ssr`), `lib/supabase/admin.ts` (**server-only**, marked with `import "server-only"`).
-- [ ] `middleware.ts`: refresh the session; redirect logged-out users from `(app)`/`(admin)` routes to `/login?next=...`; redirect logged-in users away from `/login` and `/signup`; send users with no `onboarded_at` to `/onboarding`; block `/admin` unless `profiles.is_admin`; read `site_settings.maintenance` (cached 30 s) and rewrite to `/maintenance` for non-admins.
-- [ ] `lib/rpc.ts`: typed wrapper `rpc(name, args)` returning `{ data, error: { code, message } }`, where `code` is the exception message from Plan 1 Part F.
-- [ ] `lib/errors.ts`: map every code in Plan 1's error table to a friendly sentence (catalogue keys), with a safe fallback "Something went wrong. Try again."
-- [ ] `lib/session.ts`: `getSession()`, `getProfile()`, and `getUserRoles()`, which returns `{ player: true, organizer: boolean, manager: boolean, admin: boolean }` derived from data (tournaments owned, teams managed). Cache per request.
-- [ ] Role switcher state stored in a cookie (`active_role`); falls back to the first available role.
+- [x] `lib/supabase/browser.ts`, `lib/supabase/server.ts` (cookie-based via `@supabase/ssr`), `lib/supabase/admin.ts` (**server-only**, marked with `import "server-only"`).
+- [x] `middleware.ts`: refresh the session; redirect logged-out users from `(app)`/`(admin)` routes to `/login?next=...`; redirect logged-in users away from `/login` and `/signup`; send users with no `onboarded_at` to `/onboarding`; block `/admin` unless `profiles.is_admin`; read `site_settings.maintenance` (cached 30 s) and rewrite to `/maintenance` for non-admins.
+- [x] `lib/rpc.ts`: typed wrapper `rpc(name, args)` returning `{ data, error: { code, message } }`, where `code` is the exception message from Plan 1 Part F.
+- [x] `lib/errors.ts`: map every code in Plan 1's error table to a friendly sentence (catalogue keys), with a safe fallback "Something went wrong. Try again."
+- [x] `lib/session.ts`: `getSession()`, `getProfile()`, and `getUserRoles()`, which returns `{ player: true, organizer: boolean, manager: boolean, admin: boolean }` derived from data (tournaments owned, teams managed). Cache per request.
+- [x] Role switcher state stored in a cookie (`active_role`); falls back to the first available role.
 
 ### 2.3 Design tokens and base styles (spec section 5)
-- [ ] CSS variables for all color tokens in light and dark (`--ink`, `--surface`, `--card`, `--line`, `--primary`, `--primary-ink`, `--floodlight`, `--clay`, `--danger`, `--muted`), `color-scheme`, and `prefers-color-scheme` with a manual override stored in a cookie.
-- [ ] `tailwind.config.ts`: map tokens, spacing scale (4, 8, 12, 16, 24, 32, 48, 64, 96), radii (8, 14, 999), breakpoints (640, 1024), font families.
-- [ ] `next/font`: Barlow Condensed (600, 700) as `--font-display`, Figtree (400, 500, 600) as `--font-body`. Tabular numbers on numeric components.
-- [ ] Global focus ring (2 px Turf, 2 px offset), reduced-motion rules, selection color, scrollbar styling.
+- [x] CSS variables for all color tokens in light and dark (`--ink`, `--surface`, `--card`, `--line`, `--primary`, `--primary-ink`, `--floodlight`, `--clay`, `--danger`, `--muted`), `color-scheme`, and `prefers-color-scheme` with a manual override stored in a cookie.
+- [x] `tailwind.config.ts`: map tokens, spacing scale (4, 8, 12, 16, 24, 32, 48, 64, 96), radii (8, 14, 999), breakpoints (640, 1024), font families.
+- [x] `next/font`: Barlow Condensed (600, 700) as `--font-display`, Figtree (400, 500, 600) as `--font-body`. Tabular numbers on numeric components.
+- [x] Global focus ring (2 px Turf, 2 px offset), reduced-motion rules, selection color, scrollbar styling.
 
 ### 2.4 Base components (`components/ui`)
 Build each with all states (default, hover, focus, disabled, loading, error) and a Vitest/RTL test:
