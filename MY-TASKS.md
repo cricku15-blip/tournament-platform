@@ -4,9 +4,9 @@ Claude updates this file whenever a new manual step appears. Tick a box when don
 Never put passwords or keys in chat or in git. Secrets go only in `.env` (gitignored).
 
 ## Now (blocking Plan 1)
-- [ ] **Enable pg_cron:** Supabase dashboard > Database > Extensions > `pg_cron` > enable. Then tell Claude (Claude schedules the cleanup job).
-- [ ] **Auth URLs (C1):** Authentication > URL Configuration. Site URL `http://localhost:3000`. Redirect URL `http://localhost:3000/auth/callback`.
-- [ ] **Razorpay (test mode, no KYC):** create account, Settings > API Keys > generate test keys. Put `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` in `.env`.
+- [x] pg_cron enabled and cleanup job scheduled (done by Claude).
+- [x] Auth Site URL and redirect URL set (done by Claude).
+- [ ] **Razorpay (test mode, no KYC):** create account, Settings > API Keys > generate test keys. Fill `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` in `.env` (empty lines already added).
 - [ ] **Razorpay webhook secret:** invent a long random string, put it in `.env` as `RAZORPAY_WEBHOOK_SECRET`. Claude will give the webhook URL after functions are deployed; you paste it in Razorpay dashboard > Webhooks.
 - [ ] **Resend:** create account, API key into `.env` as `RESEND_API_KEY`. Add `EMAIL_FROM` (can be `onboarding@resend.dev` for testing).
 - [ ] **Add Claude permission rules** (so Claude stops being blocked): allow `Bash(supabase functions deploy:*)`, `Bash(supabase secrets set:*)`, `Bash(supabase db push:*)`.
