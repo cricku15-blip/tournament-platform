@@ -7,6 +7,7 @@ export interface ButtonProps
   variant?: "primary" | "secondary" | "destructive" | "ghost";
   size?: "sm" | "md" | "lg";
   loading?: boolean;
+  asChild?: boolean;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -16,6 +17,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       variant = "primary",
       size = "md",
       loading = false,
+      asChild = false,
       disabled,
       children,
       ...props
@@ -41,17 +43,29 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       lg: "h-12 px-6 text-lg gap-2.5",
     };
 
+    const combinedClassName = cn(
+      baseStyles,
+      variantStyles[variant],
+      sizeStyles[size],
+      loading && "relative text-transparent pointer-events-none",
+      className
+    );
+
+    if (asChild && React.isValidElement(children)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const child = children as React.ReactElement<any>;
+      return React.cloneElement(child, {
+        ref,
+        className: cn(combinedClassName, child.props?.className),
+        ...props,
+      });
+    }
+
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
-        className={cn(
-          baseStyles,
-          variantStyles[variant],
-          sizeStyles[size],
-          loading && "relative text-transparent pointer-events-none",
-          className
-        )}
+        className={combinedClassName}
         {...props}
       >
         {loading && (

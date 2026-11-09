@@ -31,44 +31,44 @@
 
 ### 2.4 Base components (`components/ui`)
 Build each with all states (default, hover, focus, disabled, loading, error) and a Vitest/RTL test:
-- [ ] `Button` (primary, secondary, destructive, ghost; sizes; loading keeps width), `IconButton`.
-- [ ] `Input`, `Textarea`, `Select`, `Combobox` (searchable), `Checkbox`, `Switch`, `RadioCards` (for big selectable cards), `DatePicker`, `DateTimePicker`, `NumberStepper`.
-- [ ] `FormField` (label, helper, error with icon, `aria-describedby`), `FormErrorSummary` with anchor links.
-- [ ] `Tabs` (underline style, scrollable on mobile with edge fade; sub-route aware), `Accordion`.
-- [ ] `Badge` (Draft, Open, Live with pulsing dot, Completed, Cancelled), `Chip`.
-- [ ] `Card`, `Skeleton` (respects reduced motion), `EmptyState` (icon, sentence, button), `Avatar` (initials fallback), `TeamLogo` (initials on name-derived color).
-- [ ] `Dialog`, `ConfirmDialog` (names the item being changed), `Sheet` (mobile drawer), `Toast` + `useToast` (verb matches the button).
-- [ ] `DataTable` (sticky header, row hover, stacked cards on mobile), `Pagination` and `LoadMore` (keyset aware).
-- [ ] `Stepper` (wizard steps), `ProgressBar`, `StatTile`, `Tooltip`, `CopyButton`.
-- [ ] `ImageUploader` (crop, client-side resize to max 1600 px WebP 0.85, upload to the right bucket under `<uid>/`, progress, error states).
-- [ ] `LiveStrip` (pulsing Floodlight dot, link) with props only; data wired in Plan 9.
-- [ ] A `/dev/ui` page (dev only) showing every component in light and dark.
+- [x] `Button` (primary, secondary, destructive, ghost; sizes; loading keeps width), `IconButton`.
+- [x] `Input`, `Textarea`, `Select`, `Combobox` (searchable), `Checkbox`, `Switch`, `RadioCards` (for big selectable cards), `DatePicker`, `DateTimePicker`, `NumberStepper`.
+- [x] `FormField` (label, helper, error with icon, `aria-describedby`), `FormErrorSummary` with anchor links.
+- [x] `Tabs` (underline style, scrollable on mobile with edge fade; sub-route aware), `Accordion`.
+- [x] `Badge` (Draft, Open, Live with pulsing dot, Completed, Cancelled), `Chip`.
+- [x] `Card`, `Skeleton` (respects reduced motion), `EmptyState` (icon, sentence, button), `Avatar` (initials fallback), `TeamLogo` (initials on name-derived color).
+- [x] `Dialog`, `ConfirmDialog` (names the item being changed), `Sheet` (mobile drawer), `Toast` + `useToast` (verb matches the button).
+- [x] `DataTable` (sticky header, row hover, stacked cards on mobile), `Pagination` and `LoadMore` (keyset aware).
+- [x] `Stepper` (wizard steps), `ProgressBar`, `StatTile`, `Tooltip`, `CopyButton`.
+- [x] `ImageUploader` (crop, client-side resize to max 1600 px WebP 0.85, upload to the right bucket under `<uid>/`, progress, error states).
+- [x] `LiveStrip` (pulsing Floodlight dot, link) with props only; data wired in Plan 9.
+- [x] A `/dev/ui` page (dev only) showing every component in light and dark.
 
 ### 2.5 Layout shells (spec section 6)
-- [ ] `PublicHeader`, `AppHeader`, `Footer`, `WorkspaceSidebar` (desktop) / `BottomBar` (mobile, 4 items + More sheet), `Breadcrumbs`.
-- [ ] `CitySelector`: searchable list of active cities. Logged out: stores a browsing cookie. Logged in: shows the profile city and, on change, opens the confirm dialog and calls `change_city`.
-- [ ] `RoleSwitcher` (only roles the user has), `UserMenu`, `GlobalSearch` (UI only; query wiring in Plan 4), `NotificationsBell` (UI shell; data in Plan 3).
-- [ ] Route-group layouts: `(public)` public header + footer; `(auth)` centered card with faint pitch-line pattern; `(app)` app header + sidebar/bottom bar; `(admin)` dark sidebar and "Admin" badge.
+- [x] `PublicHeader`, `AppHeader`, `Footer`, `WorkspaceSidebar` (desktop) / `BottomBar` (mobile, 4 items + More sheet), `Breadcrumbs`.
+- [x] `CitySelector`: searchable list of active cities. Logged out: stores a browsing cookie. Logged in: shows the profile city and, on change, opens the confirm dialog and calls `change_city`.
+- [x] `RoleSwitcher` (only roles the user has), `UserMenu`, `GlobalSearch` (UI only; query wiring in Plan 4), `NotificationsBell` (UI shell; data in Plan 3).
+- [x] Route-group layouts: `(public)` public header + footer; `(auth)` centered card with faint pitch-line pattern; `(app)` app header + sidebar/bottom bar; `(admin)` dark sidebar and "Admin" badge.
 
 ### 2.6 System pages
-- [ ] `not-found.tsx` (J1), `error.tsx` + `global-error.tsx` (J2, shows an error reference ID), `/maintenance` (J3). Illustrations are simple line drawings (ball missing stumps, whistle).
+- [x] `not-found.tsx` (J1), `error.tsx` + `global-error.tsx` (J2, shows an error reference ID), `/maintenance` (J3). Illustrations are simple line drawings (ball missing stumps, whistle).
 
 ### 2.7 Cross-cutting
-- [ ] `next-intl` set up with an English catalogue; all strings in the catalogue. Hindi is **[OPEN]**; structure must allow adding it later.
-- [ ] Formatting helpers: `formatINR(paise)`, `formatDate`, `formatDateTime` (India time), `formatNumberIN`.
-- [ ] Rate limiting helper `lib/rate-limit.ts` (choose Upstash Redis or a Postgres counter; document the choice) with presets: `auth`, `contact`, `search`, `invite`.
-- [ ] Error tracking provider chosen and wired (e.g. Sentry); a request ID is generated in middleware and attached to logs and the `/500` page.
-- [ ] Security headers and CSP in `next.config.ts` (allow Supabase, Razorpay checkout script and frames, Google sign-in).
-- [ ] Analytics: privacy-friendly page and event tracking behind a consent-free setup (no cookies) **[OPEN]**.
-- [ ] CI (GitHub Actions): install, lint, typecheck, unit tests, Playwright smoke test, build; fail on bundle budget breach (landing under 150 KB JS gzipped).
-- [ ] `README.md`: how to run locally, env vars, how to apply migrations and regenerate types.
+- [x] `next-intl` set up with an English catalogue; all strings in the catalogue. Hindi is **[OPEN]**; structure must allow adding it later.
+- [x] Formatting helpers: `formatINR(paise)`, `formatDate`, `formatDateTime` (India time), `formatNumberIN`.
+- [x] Rate limiting helper `lib/rate-limit.ts` (choose Upstash Redis or a Postgres counter; document the choice) with presets: `auth`, `contact`, `search`, `invite`.
+- [x] Error tracking provider chosen and wired (e.g. Sentry); a request ID is generated in middleware and attached to logs and the `/500` page.
+- [x] Security headers and CSP in `next.config.ts` (allow Supabase, Razorpay checkout script and frames, Google sign-in).
+- [x] Analytics: privacy-friendly page and event tracking behind a consent-free setup (no cookies) **[OPEN]**.
+- [x] CI (GitHub Actions): install, lint, typecheck, unit tests, Playwright smoke test, build; fail on bundle budget breach (landing under 150 KB JS gzipped).
+- [x] `README.md`: how to run locally, env vars, how to apply migrations and regenerate types.
 
 ## Acceptance criteria
-- [ ] `npm run dev` shows public layout; light/dark toggle works and persists; city selector works for logged-out and logged-in users.
-- [ ] `/dev/ui` renders every component without console errors; keyboard-only navigation works everywhere on it.
-- [ ] Middleware: logged-out user visiting `/dashboard` goes to `/login?next=/dashboard`; non-admin visiting `/admin` is blocked.
-- [ ] `lib/rpc.ts` returns friendly messages for at least 10 sample error codes (unit tested).
-- [ ] Lint, typecheck, unit tests, and build pass in CI; landing JS budget respected.
-- [ ] No server secret is present in the client bundle (check with a build analysis).
+- [x] `npm run dev` shows public layout; light/dark toggle works and persists; city selector works for logged-out and logged-in users.
+- [x] `/dev/ui` renders every component without console errors; keyboard-only navigation works everywhere on it.
+- [x] Middleware: logged-out user visiting `/dashboard` goes to `/login?next=/dashboard`; non-admin visiting `/admin` is blocked.
+- [x] `lib/rpc.ts` returns friendly messages for at least 10 sample error codes (unit tested).
+- [x] Lint, typecheck, unit tests, and build pass in CI; landing JS budget respected.
+- [x] No server secret is present in the client bundle (check with a build analysis).
 
 **Out of scope:** real pages (Plans 3 to 10).

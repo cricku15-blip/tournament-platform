@@ -18,7 +18,6 @@ describe("env validation", () => {
 
   it("serverEnv loads properly when window is undefined (on server)", async () => {
     const originalWindow = global.window;
-    // @ts-expect-error Mocking server environment
     delete (global as unknown as { window?: Window }).window;
 
     const { serverEnv } = await import("../env");

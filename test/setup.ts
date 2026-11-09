@@ -1,4 +1,4 @@
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
 
 // Ensure required environment variables exist during tests
 process.env.NEXT_PUBLIC_SUPABASE_URL =

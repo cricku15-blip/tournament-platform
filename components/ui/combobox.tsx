@@ -52,10 +52,6 @@ export function Combobox({
 
   const selectedOption = options.find((opt) => opt.value === value);
 
-  React.useEffect(() => {
-    setHighlightedIndex(0);
-  }, [query]);
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!open) {
       if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
@@ -97,6 +93,7 @@ export function Combobox({
           type="button"
           role="combobox"
           aria-expanded={open}
+          aria-controls="combobox-options-list"
           disabled={disabled}
           onKeyDown={handleKeyDown}
           className={cn(
@@ -123,14 +120,17 @@ export function Combobox({
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setHighlightedIndex(0);
+              }}
               onKeyDown={handleKeyDown}
               placeholder={searchPlaceholder}
               className="w-full bg-transparent text-sm text-ink placeholder:text-muted outline-none"
               autoFocus
             />
           </div>
-          <div className="max-h-60 overflow-y-auto p-1">
+          <div id="combobox-options-list" className="max-h-60 overflow-y-auto p-1">
             {filteredOptions.length === 0 ? (
               <div className="py-4 text-center text-sm text-muted">
                 {emptyMessage}
