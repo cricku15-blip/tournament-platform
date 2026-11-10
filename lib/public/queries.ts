@@ -367,7 +367,7 @@ export function getMatch(tournamentId: string, matchId: string) {
     if (!match) return null;
     const published = match.result_published_at !== null;
     const [bat, bowl, lineups, events, pom, h2h] = await Promise.all([
-      published ? publicDb.from("cricket_batting").select("*").eq("match_id", matchId).order("innings").order("batting_order", { ascending: true }) : Promise.resolve({ data: [] as never[] }),
+      published ? publicDb.from("cricket_batting").select("*").eq("match_id", matchId).order("innings") : Promise.resolve({ data: [] as never[] }),
       published ? publicDb.from("cricket_bowling").select("*").eq("match_id", matchId).order("innings") : Promise.resolve({ data: [] as never[] }),
       published ? publicDb.from("football_lineups").select("*").eq("match_id", matchId) : Promise.resolve({ data: [] as never[] }),
       published ? publicDb.from("football_events").select("*").eq("match_id", matchId).order("minute", { ascending: true }) : Promise.resolve({ data: [] as never[] }),
