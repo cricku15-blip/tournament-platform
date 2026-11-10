@@ -113,7 +113,7 @@ export async function ApplicationCounts({ userId }: { userId: string }) {
     if (a.status === "pending" || a.status === "approved" || a.status === "rejected") counts[a.status]++;
   }
   return (
-    <SectionCard title="My applications">
+    <SectionCard title="My applications" action={<Link href="/player/applications" className="text-sm font-semibold text-primary hover:underline">View all</Link>}>
       <div className="grid grid-cols-3 gap-3">
         <StatTile label="Pending" value={counts.pending} />
         <StatTile label="Approved" value={counts.approved} />
@@ -158,7 +158,7 @@ export async function ManagerTeams({ userId }: { userId: string }) {
             const size = sizes.get(t.id) ?? 0;
             return (
               <li key={t.id} className="rounded-input border border-line p-4">
-                <p className="font-semibold text-ink">{t.name}</p>
+                <Link href={`/manager/teams/${t.id}`} className="font-semibold text-ink hover:text-primary">{t.name}</Link>
                 <p className="text-xs text-muted">{tour?.name}</p>
                 <p className="mt-2 text-sm text-muted">
                   Squad {size}

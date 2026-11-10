@@ -12,6 +12,7 @@ _none yet_
 | 4 Public site | Claude | plan-4-public-site | Complete (needs seed data to eyeball tournament pages) | A1-A10, B1-B4, B6 + SEO. See below. |
 | 5 Organizer workspace | Claude | plan-5-organizer-workspace | Complete | H1-H4 with 12 tabs. See below. |
 | 6 Payments and subscription | Claude | plan-6-payments-subscription | Code complete, NOT tested against Razorpay | H5 checkout + D4 subscription. See below. |
+| 7 Teams, players, squads | Claude | plan-7-teams-players-squads | Complete | G1, G2, D6, E1, E2, F1, F2. See below. |
 
 ## Plan 2 Handoff Details
 - **Branch:** `plan-2-web-foundation`
@@ -81,3 +82,10 @@ _none yet_
 - **NOT done / skipped:** 6.5 notification and email triggers (move to a Plan 9 scheduled job; the webhook was not changed); Playwright with mocked Razorpay (owner said skip browser tests). Unit tests for `withTax`, poll and eligibility pass.
 - **Blocked on owner:** nothing in this plan can be exercised end to end until `RAZORPAY_*` and `RESEND_API_KEY` are set in `.env`, `supabase secrets set` is run, and the webhook is added in the Razorpay dashboard (see MY-TASKS.md). Follow `docs/payments-testing.md`.
 - **Known gaps:** a failed payment on a "past due" subscription creates a fresh subscription via `create-subscription` (that function does not special-case past_due); the grace-period length shown on the page comes from `subscriptions.grace_until`, not hard-coded. The invoice/receipt link needs `generate-invoice` to have run (it fills `invoice_url` / `receipt_url`).
+
+## Plan 7 Handoff Details
+- **Branch:** `plan-7-teams-players-squads`.
+- **Done:** G1 `/tournaments/[slug]/apply-player` (entry checks in order: closed/full, city mismatch with "Switch to <City>" confirm, subscription, already applied, then the form with role, experience, sport profile fields, phone, availability, notes, custom questions, payments checkbox; calls `apply_as_player`), G2 `/apply-team` (calls `apply_with_team`), D6 `/join/[code]` (lives in the `(auth)` group so logged-out visitors can see the card; service-role lookup returns a tiny summary only for valid pending invites; rate limited), E1 `/player/applications` (tabs, withdraw, all row states), E2 `/player/tournaments`, F1 `/manager/teams`, F2 `/manager/teams/[teamId]` (Overview with checklist, Squad with city-filtered player search, jersey edit, remove, lock/unlock, Invites placeholder, Fixtures + `.ics` calendar route, Team profile). Manager role in the switcher now requires an approved team.
+- **Decisions applied:** direct squad adds must be in the tournament city (owner decision 5). Roster not required for team applications (decision 6).
+- **Notes / limits:** "Decline" on an invite just leaves the page (there is no decline RPC). Invite-by-link for players who are not on GroundWar is manual (copy a sign-up link, add them after they join). Assistant-manager invites are not built (owner wants them in v1; they need a migration, scheduled in the extra plan after Plan 9). The apply pages are in the `(app)` route group under the same URL prefix as the public tournament pages, protected by a middleware regex.
+- **Not verified:** nothing run against real data (no tournaments exist yet); Playwright skipped per owner. The DB enforcement (`squad_full`, `forbidden` on another team's squad, invite single-use) comes from Plan 1 functions and was not re-tested live.

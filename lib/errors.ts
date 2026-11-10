@@ -12,6 +12,8 @@ export const ERROR_MESSAGES: Record<string, string> = {
   forbidden: "You do not have permission to perform this action.",
   not_found: "The requested item was not found.",
   invalid_status: "This action is not allowed in the current status.",
+  team_name_locked: "The team name can no longer be changed.",
+  only_organizer_can_unlock: "Only the organizer can unlock a squad.",
   rate_limited: "Too many attempts. Please wait a minute and try again.",
   no_active_subscription: "You don't have an active subscription.",
   already_subscribed: "You already have an active subscription.",

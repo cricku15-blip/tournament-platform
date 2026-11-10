@@ -9,38 +9,38 @@
 ## Tasks
 
 ### 7.1 Apply as a player (G1)
-- [ ] Server-side **entry checks in order** with the exact blocking messages and buttons from spec G1: logged in, registration open and not past deadline and not full, **city match** (button "Switch to <City>" with confirm dialog calling `change_city`), **active subscription** (button "Start subscription"), not already applied (show current status), required sport profile fields (inline prompt).
-- [ ] Form: role/position (prefilled), batting hand + bowling style or preferred foot (from `sports.config.profile_fields`), experience level, contact phone (prefilled), availability checkbox, notes (300), the organizer's custom questions, and the "payments happen outside this platform" checkbox.
-- [ ] Submit calls `apply_as_player`; map every error code to a friendly message; success page shows status Pending and links to E1. Sticky summary box (tournament, dates, squad mode, auction date).
-- [ ] Re-apply after withdrawal works (database handles it).
+- [x] Server-side **entry checks in order** with the exact blocking messages and buttons from spec G1: logged in, registration open and not past deadline and not full, **city match** (button "Switch to <City>" with confirm dialog calling `change_city`), **active subscription** (button "Start subscription"), not already applied (show current status), required sport profile fields (inline prompt).
+- [x] Form: role/position (prefilled), batting hand + bowling style or preferred foot (from `sports.config.profile_fields`), experience level, contact phone (prefilled), availability checkbox, notes (300), the organizer's custom questions, and the "payments happen outside this platform" checkbox.
+- [x] Submit calls `apply_as_player`; map every error code to a friendly message; success page shows status Pending and links to E1. Sticky summary box (tournament, dates, squad mode, auction date).
+- [x] Re-apply after withdrawal works (database handles it).
 
 ### 7.2 Apply with a team (G2)
-- [ ] Only for tournaments with `team_entry` open or both and registration open. Fields: team name (unique per tournament), logo, two colors, home ground, manager phone (prefilled), expected squad size, notes, payments checkbox. Calls `apply_with_team`.
-- [ ] Success shows Pending; organizer approves in Plan 5's Teams tab; on approval the applicant is already the manager (the function sets `manager_id`).
+- [x] Only for tournaments with `team_entry` open or both and registration open. Fields: team name (unique per tournament), logo, two colors, home ground, manager phone (prefilled), expected squad size, notes, payments checkbox. Calls `apply_with_team`.
+- [x] Success shows Pending; organizer approves in Plan 5's Teams tab; on approval the applicant is already the manager (the function sets `manager_id`).
 
 ### 7.3 Accept invite (D6)
-- [ ] `/join/[code]`: look up the invite through a server action (service role, returns only safe tournament/team summary for valid codes; nothing for invalid ones). Card per spec with **Accept and manage team** (`accept_team_invite`) and **Decline**.
-- [ ] Logged-out visitors see "Log in to accept" and the code survives login (`next`). Handle invalid/expired/used codes ("This invite isn't valid anymore. Ask the organizer for a new one.") and `already_manager_in_tournament`.
-- [ ] After accepting, add the Manager role (derived from data) and redirect to `/manager/teams/[teamId]`.
-- [ ] Rate limit the code lookup.
+- [x] `/join/[code]`: look up the invite through a server action (service role, returns only safe tournament/team summary for valid codes; nothing for invalid ones). Card per spec with **Accept and manage team** (`accept_team_invite`) and **Decline**.
+- [x] Logged-out visitors see "Log in to accept" and the code survives login (`next`). Handle invalid/expired/used codes ("This invite isn't valid anymore. Ask the organizer for a new one.") and `already_manager_in_tournament`.
+- [x] After accepting, add the Manager role (derived from data) and redirect to `/manager/teams/[teamId]`.
+- [x] Rate limit the code lookup.
 
 ### 7.4 Player workspace (E1, E2)
-- [ ] **E1 My applications:** tabs All / Pending / Approved / Rejected / Withdrawn; row states exactly as spec (Pending with **Withdraw** via `withdraw_application`; Approved in auction mode with date and **Watch auction**; Approved in direct mode; Picked with team and points; Not picked this time (neutral wording); Rejected with reason). Empty state with "Find tournaments in <city>".
-- [ ] **E2 My tournaments:** cards for squad memberships (tournament, team, role, next match, team standing, my stats placeholder until Plan 8); completed ones collapsed.
+- [x] **E1 My applications:** tabs All / Pending / Approved / Rejected / Withdrawn; row states exactly as spec (Pending with **Withdraw** via `withdraw_application`; Approved in auction mode with date and **Watch auction**; Approved in direct mode; Picked with team and points; Not picked this time (neutral wording); Rejected with reason). Empty state with "Find tournaments in <city>".
+- [x] **E2 My tournaments:** cards for squad memberships (tournament, team, role, next match, team standing, my stats placeholder until Plan 8); completed ones collapsed.
 
 ### 7.5 Manager workspace (F1, F2)
-- [ ] **F1 My teams:** cards with logo, tournament, status, squad "9 of 11 (min 7)", next fixture, auction state; empty state with invite-code input.
-- [ ] **F2 Team workspace** (access: manager of that team, organizer, admin):
+- [x] **F1 My teams:** cards with logo, tournament, status, squad "9 of 11 (min 7)", next fixture, auction state; empty state with invite-code input.
+- [x] **F2 Team workspace** (access: manager of that team, organizer, admin):
   - **Overview:** tiles (squad, next match, standing, auction status), auto-ticking checklist (logo, minimum squad, confirm before deadline), organizer announcements.
   - **Squad:** table (avatar, name, role, jersey number editable via `set_jersey_number`, source, price, status). Direct mode: **Add player** dialog with *Search registered players* (search `public_profiles` by name/username using the trigram index, rate limited, only shows players in the tournament's city to match `add_squad_player`) and *Invite by link* (shareable link to sign up; the manager adds them after they join; mark clearly as manual in v1). Remove player (`remove_squad_player`). Auction mode: read-only with "Squad is set by the auction." Min/max banner ("Min 7, max 11. 2 more needed."). **Lock squad** (`set_squad_lock`) with confirm; only the organizer can unlock.
   - **Invites:** pending player invites list (v1: shows manual invites the manager made, resend/cancel) **[OPEN: assistant manager invite is v2]**.
   - **Fixtures:** the team's fixtures with an **Add to calendar** link (server route returning an `.ics`).
   - **Team profile:** edit name (blocked after registration closes: database raises `team_name_locked`), logo, colors, description, home ground.
-- [ ] All mutations call `revalidateTag('tournament:<id>')`.
+- [x] All mutations call `revalidateTag('tournament:<id>')`.
 
 ### 7.6 Roles and navigation
-- [ ] Manager role appears in the role switcher only when the user manages an approved team; Organizer when they own a tournament; sidebar items per spec 6.4.
-- [ ] Dashboard (Plan 3) cards now link to these pages.
+- [x] Manager role appears in the role switcher only when the user manages an approved team; Organizer when they own a tournament; sidebar items per spec 6.4.
+- [x] Dashboard (Plan 3) cards now link to these pages.
 
 ## Acceptance criteria
 - [ ] Player in another city is blocked with the exact message and a working Switch city button; player without subscription is blocked with Start subscription; a correct player applies successfully.
