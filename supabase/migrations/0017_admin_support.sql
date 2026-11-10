@@ -27,3 +27,31 @@ begin
 exception when others then
   raise notice 'pg_cron not available; schedule public.restore_expired_suspensions() manually';
 end $$;
+
+-- Admin search by exact email (emails live in auth.users, which the API can't join). Service role only.
+create or replace function public.admin_find_user_by_email(p_email text)
+returns uuid language sql stable security definer set search_path = public, auth as $$
+  select id from auth.users where lower(email) = lower(trim(p_email)) limit 1;
+$$;
+revoke all on function public.admin_find_user_by_email(text) from public, anon, authenticated;
+grant execute on function public.admin_find_user_by_email(text) to service_role;
+
+-- One round trip for the admin dashboard tiles.
+create or replace function public.admin_dashboard()
+returns jsonb language sql stable security definer set search_path = public as $$
+  select jsonb_build_object(
+    'users_today',     (select count(*) from public.profiles where created_at >= date_trunc('day', now())),
+    'users_7d',        (select count(*) from public.profiles where created_at >= now() - interval '7 days'),
+    'active_tournaments', (select count(*) from public.tournaments where status in ('registration_open','registration_closed','auction','squads_locked','live')),
+    'live_auctions',   (select count(*) from public.auction_settings where status = 'live'),
+    'organizer_revenue_month_paise', (select coalesce(sum(total_paise), 0) from public.tournament_payments where status = 'paid' and paid_at >= date_trunc('month', now())),
+    'active_subscriptions', (select count(*) from public.subscriptions where status = 'active'),
+    'failed_payments_7d', (select (select count(*) from public.tournament_payments where status = 'failed' and created_at >= now() - interval '7 days')
+                                + (select count(*) from public.subscription_payments where status = 'failed' and created_at >= now() - interval '7 days')),
+    'open_reports',    (select count(*) from public.reports where status in ('open','reviewing')),
+    'pending_refunds', (select count(*) from public.refunds where status = 'requested'),
+    'failed_webhooks_24h', (select count(*) from public.webhook_events where error is not null and created_at >= now() - interval '24 hours')
+  );
+$$;
+revoke all on function public.admin_dashboard() from public, anon, authenticated;
+grant execute on function public.admin_dashboard() to service_role;
