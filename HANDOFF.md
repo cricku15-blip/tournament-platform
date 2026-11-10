@@ -63,3 +63,17 @@ _none yet_
   - Tables and leaderboards only show data for published tournaments; DB currently has no tournaments, so tournament, team and match pages were only verified for 404 behaviour and compile, not visually.
   - Not measured: Lighthouse scores, 200-tournament seed timing, WhatsApp card preview, Playwright browse flow (tests skipped on owner's instruction).
 - **Env vars:** `NEXT_PUBLIC_APP_URL` should be set in production (used for canonical, sitemap, OG, JSON-LD).
+
+
+## Plan 5 PROGRESS NOTE (paused 2026-11-10, branch `plan-5-organizer-workspace`, NOT merged, NOT pushed)
+**Done (committed or in the WIP commit):**
+- `lib/organizer/`: `schemas.ts` (Zod for all wizard steps, sport rules, auction slabs), `match-count.ts`, `datetime.ts`, `guard.ts` (`requireOwnedTournament`, 404 for non-owners). 10 unit tests pass.
+- `app/(app)/organizer/actions.ts`: saveDraft (per step), saveAuctionSettings, checkSlug (service role, returns boolean only), duplicate, deleteDraft, changeStatus (publish/close/reopen/lockPool/lockSquads/goLive/complete), cancelTournament, postAnnouncement, addTeamSlot, inviteManager, reviewTeam, removeTeam, setTeamEntry, reviewApplication, updatePoolPlayers, setSequenceMode. All call `revalidateTournament`.
+- Pages: H1 `/organizer`, H2 `/organizer/tournaments` (tabs, keyset, Duplicate/Share/Delete draft), H3 `/organizer/tournaments/new` (7-step wizard, autosave 10 s, slug check, resume with `?draft=<id>`).
+- Manager components written: `manager/next-step.tsx`, `manager/teams-tab.tsx`, `manager/applications-table.tsx`.
+**Still to do for Plan 5:**
+1. `app/(app)/organizer/tournaments/[id]/page.tsx` (H4): header + status stepper + `?tab=` routing; call `requireOwnedTournament`.
+2. Tab server components: Overview (NextStepCard + activity feed), Setup (wizard `mode="setup"`, locks all four fields when status != draft), Teams (query teams + manager names, render TeamsTab), Applications (filters status/role/experience/search, counters, keyset 30, build `ApplicationRow` incl. past stats, render ApplicationsTable), Pool/Players (auction: edit category/base price, sequence, Lock pool via changeStatus; direct: read-only squads), Announcements, Plan and payment (tier, fee, invoice link; Upgrade wired in Plan 6), Settings (cancel with reason dialog, delete draft), placeholder tabs Auction/Fixtures/Results/Chat.
+3. `loading.tsx`/error states, tick `plan-5-organizer-workspace.md`, lint, build, HANDOFF entry, push, merge to `main`.
+**Notes:** wizard "Continue to payment" goes to `/organizer/tournaments/[id]/checkout` (Plan 6). Invite links use `/join/<code>` (Plan 7). No tests run against the real DB yet. Playwright tests skipped per owner. A stray `next start` on ports 3100/3101 may still be running; stop it manually if the ports are needed.
+**Next after Plan 5:** Plan 6 (payments), 7 (teams/players/squads), 8, 9, then the extra plan for assistant manager / ownership transfer / impersonation / group stage, then Plan 10.
