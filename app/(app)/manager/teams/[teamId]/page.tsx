@@ -35,6 +35,9 @@ export default async function TeamWorkspacePage({ params, searchParams }: { para
           <p className="text-sm text-muted"><Link href={`/tournaments/${t.slug}`} className="hover:text-primary">{t.name}</Link> · <Badge variant={team.status === "approved" ? "open" : "neutral"}>{team.status}</Badge></p>
         </div>
       </header>
+      {t.squad_mode === "auction" && (
+        <Button asChild variant="secondary" className="self-start"><Link href={`/manager/teams/${team.id}/auction`}>Auction prep</Link></Button>
+      )}
       <nav aria-label="Team sections" className="-mx-1 flex gap-1 overflow-x-auto border-b border-line px-1">
         {TABS.map(([k, l]) => (
           <Link key={k} href={`${base}?tab=${k}`} aria-current={k === tab ? "page" : undefined} className={cn("inline-flex min-h-11 shrink-0 items-center border-b-[3px] px-3 text-sm font-semibold", k === tab ? "border-primary text-primary" : "border-transparent text-muted hover:text-ink")}>{l}</Link>

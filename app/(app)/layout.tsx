@@ -4,6 +4,7 @@ import { AppHeader } from "@/components/layout/app-header";
 import { WorkspaceSidebar } from "@/components/layout/workspace-sidebar";
 import { createClient } from "@/lib/supabase/server";
 import { getCities } from "@/lib/public/queries";
+import { LiveStripLoader } from "@/components/domain/public/live-strip-loader";
 import { BottomBar } from "@/components/layout/bottom-bar";
 import {
   getSessionUser,
@@ -53,6 +54,7 @@ export default async function AppLayout({
         user={userSummary}
         cities={cities}
       />
+      <LiveStripLoader />
       <div className="flex flex-1">
         <WorkspaceSidebar role={currentRole} />
         <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-20 lg:pb-8">
