@@ -28,14 +28,12 @@ export async function rpc<TName extends RpcName>(
     let client = customClient;
 
     if (!client) {
-      if (typeof window !== "undefined") {
-        client = createBrowserClient();
-      } else {
-        const { createClient: createServerClient } = await import(
-          "./supabase/server"
-        );
-        client = await createServerClient();
+      // Server callers must pass their own client (createClient from lib/supabase/server);
+      // importing it here would pull next/headers into client bundles.
+      if (typeof window === "undefined") {
+        throw new Error("rpc_server_client_required");
       }
+      client = createBrowserClient();
     }
 
     // Call Supabase RPC

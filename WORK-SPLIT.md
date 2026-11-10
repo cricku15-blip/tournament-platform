@@ -33,5 +33,5 @@ Note: plans 5 to 9 list "Depends on" earlier plans. The phase 4 parallelism is o
 
 **Antigravity (when its phase starts):** "Read RULES.md, tournament-platform-web-spec.md, WORK-SPLIT.md, HANDOFF.md and plan-N-*.md. You own plan N only. Work on branch plan-N-<name>, follow tasks in order, tick checkboxes, and log to HANDOFF.md when done."
 
-## Antigravity order (it owns plans 2, 3, 4, 5, 7, plus admin pages and tests/CI)
+## Antigravity order (SUPERSEDED 2026-11-10: Antigravity removed; Claude now builds plans 3, 4, 5, 7 as well)
 Run strictly one after another, not in parallel: **2, then 3, then 4, then 5, then 7**. Claude does plans 6, 8, 9 and security/load tests in between, on separate branches, and only touches shared files by appending.
