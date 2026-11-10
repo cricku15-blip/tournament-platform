@@ -99,10 +99,11 @@ export function OnboardingWizard({
     sent: false,
   });
 
-  // Survive refresh
+  // Survive refresh. sessionStorage only exists in the browser, so restore after mount.
   React.useEffect(() => {
     try {
       const raw = sessionStorage.getItem(KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time restore from an external store
       if (raw) setS((prev) => ({ ...prev, ...(JSON.parse(raw) as Partial<State>) }));
     } catch {}
     setHydrated(true);
@@ -118,8 +119,8 @@ export function OnboardingWizard({
 
   // Debounced username availability
   React.useEffect(() => {
-    if (!s.username) return setUsernameState({});
     const t = setTimeout(async () => {
+      if (!s.username) return setUsernameState({});
       setUsernameState({ checking: true });
       const r = await checkUsername(s.username);
       setUsernameState({ ok: r.available, msg: r.available ? "Username is available." : r.reason });
