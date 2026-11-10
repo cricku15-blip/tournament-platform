@@ -87,3 +87,28 @@ export function scheduleSlots(count: number, startDate: string, matchesPerDay: n
   }
   return out;
 }
+
+// Snake-distribute an ordered list of team ids into `groupCount` groups (seed 1 -> group 1, seed 2 -> group 2, ... then back).
+export function splitIntoGroups(order: string[], groupCount: number): string[][] {
+  const groups: string[][] = Array.from({ length: groupCount }, () => []);
+  order.forEach((id, i) => {
+    const lap = Math.floor(i / groupCount), pos = i % groupCount;
+    groups[lap % 2 === 0 ? pos : groupCount - 1 - pos].push(id);
+  });
+  return groups;
+}
+
+// Seeds for the knockout after the group stage. `ranked[g]` is group g's teams, best first.
+// Winners take seeds 1..k; runners-up follow, arranged so the first round never pairs two teams from one group.
+export function groupKnockoutSeeds(ranked: string[][], advance: 1 | 2): string[] {
+  const k = ranked.length;
+  const winners = ranked.map((g) => g[0]).filter(Boolean);
+  if (advance === 1 || k < 2) return winners;
+  const runners: string[] = [];
+  for (let j = 1; j <= k; j++) {
+    const g = ((k + 1 - j) % k) + 1;
+    const r = ranked[g - 1]?.[1];
+    if (r) runners.push(r);
+  }
+  return [...winners, ...runners];
+}

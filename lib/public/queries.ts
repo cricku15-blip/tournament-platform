@@ -146,7 +146,7 @@ export const getCityBySlug = unstable_cache(
 );
 
 const TOURNAMENT_COLUMNS =
-  "id, name, slug, sport_id, sport_slug, sport_name, city_id, city_name, city_slug, venue_name, venue_address, start_date, end_date, format, team_count, league_legs, playoff_style, third_place_match, rules, squad_mode, squad_min, squad_max, team_entry, team_deadline, player_deadline, allow_player_applications, visibility, contact_phone, contact_email, entry_fee_info, prizes, individual_awards, rules_text, description_short, description_full, banner_url, logo_url, status, cancelled_reason, published_at, approved_team_count, approved_player_count, organizer_id, organizer_name, organizer_avatar";
+  "id, name, slug, sport_id, sport_slug, sport_name, city_id, city_name, city_slug, venue_name, venue_address, start_date, end_date, format, team_count, league_legs, playoff_style, third_place_match, rules, squad_mode, squad_min, squad_max, team_entry, team_deadline, player_deadline, allow_player_applications, visibility, contact_phone, contact_email, entry_fee_info, prizes, individual_awards, rules_text, description_short, description_full, banner_url, logo_url, status, cancelled_reason, published_at, approved_team_count, approved_player_count, organizer_id, organizer_name, organizer_avatar, group_count, advance_per_group";
 
 export type TournamentFull = Record<string, unknown> & {
   id: string;
@@ -182,6 +182,8 @@ export type TournamentFull = Record<string, unknown> & {
   rules: unknown;
   entry_fee_info: string | null;
   playoff_style: string | null;
+  group_count: number | null;
+  advance_per_group: number | null;
   league_legs: number;
   third_place_match: boolean;
 };
@@ -244,7 +246,7 @@ export function getTournamentStandings(id: string) {
   return tournamentData(id, "standings", async () => {
     const { data } = await publicDb
       .from("standings")
-      .select("team_id, played, won, lost, tied, drawn, no_result, points, nrr, gf, ga, gd, position")
+      .select("team_id, group_no, played, won, lost, tied, drawn, no_result, points, nrr, gf, ga, gd, position")
       .eq("tournament_id", id)
       .order("position", { ascending: true, nullsFirst: false })
       .limit(100);

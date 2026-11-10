@@ -33,10 +33,12 @@ export interface DraftState {
   logoUrl: string | null;
   descriptionShort: string;
   descriptionFull: string;
-  format: "league" | "knockout" | "league_playoffs";
+  format: "league" | "knockout" | "league_playoffs" | "groups_knockout";
   teamCount: number;
   leagueLegs: 1 | 2;
-  playoffStyle: "top2_final" | "top4_semis" | "qualifier_style" | null;
+  playoffStyle: "top2_final" | "top4_semis" | "qualifier_style" | "top8_quarters" | null;
+  groupCount: number | null;
+  advancePerGroup: 1 | 2 | null;
   thirdPlaceMatch: boolean;
   seedingMethod: "random" | "manual";
   rules: Record<string, unknown>;
@@ -95,7 +97,7 @@ export function emptyDraft(sport: SportOption | undefined, defaultCityId: string
   return {
     name: "", slug: "", sportId: sport?.id ?? "", cityId: defaultCityId, venueName: "", venueAddress: "",
     startDate: "", endDate: "", bannerUrl: null, logoUrl: null, descriptionShort: "", descriptionFull: "",
-    format: "league", teamCount: 4, leagueLegs: 1, playoffStyle: null, thirdPlaceMatch: false, seedingMethod: "random",
+    format: "league", teamCount: 4, leagueLegs: 1, playoffStyle: null, thirdPlaceMatch: false, seedingMethod: "random", groupCount: null, advancePerGroup: null,
     rules, squadMode: "direct", squadMin: players, squadMax: Math.min(25, players + 4), playerPoolCap: null,
     squadLockDeadline: "", allowPlayerApplications: true, auction: defaultAuction(slug),
     teamEntry: "invite", teamDeadline: "", playerDeadline: "", customQuestions: [], visibility: "public",
@@ -119,7 +121,7 @@ export function fromRow(
     startDate: t.start_date ?? "", endDate: t.end_date ?? "", bannerUrl: t.banner_url, logoUrl: t.logo_url,
     descriptionShort: t.description_short ?? "", descriptionFull: t.description_full ?? "",
     format: t.format, teamCount: t.team_count, leagueLegs: t.league_legs === 2 ? 2 : 1,
-    playoffStyle: (t.playoff_style as DraftState["playoffStyle"]) ?? null, thirdPlaceMatch: t.third_place_match,
+    playoffStyle: (t.playoff_style as DraftState["playoffStyle"]) ?? null, thirdPlaceMatch: t.third_place_match, groupCount: t.group_count, advancePerGroup: t.advance_per_group === 1 ? 1 : t.advance_per_group === 2 ? 2 : null,
     seedingMethod: t.seeding_method === "manual" ? "manual" : "random",
     rules: t.rules && typeof t.rules === "object" && Object.keys(t.rules as object).length > 0 ? (t.rules as Record<string, unknown>) : base.rules,
     squadMode: t.squad_mode, squadMin: t.squad_min ?? base.squadMin, squadMax: t.squad_max ?? base.squadMax,

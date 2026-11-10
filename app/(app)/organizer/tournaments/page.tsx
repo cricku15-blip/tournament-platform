@@ -1,3 +1,4 @@
+import { ownedOrAssistedFilter } from "@/lib/organizer/access";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -41,7 +42,7 @@ export default async function OrganizerTournamentsPage({ searchParams }: { searc
   let q = supabase
     .from("tournaments")
     .select("id, name, slug, status, start_date, team_count, approved_team_count, created_at, sport_id, sports(name)")
-    .eq("organizer_id", user.id)
+    .or(await ownedOrAssistedFilter(supabase, user.id))
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
     .limit(PAGE + 1);

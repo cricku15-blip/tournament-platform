@@ -1,5 +1,6 @@
 "use server";
 
+import { canOrganize } from "@/lib/organizer/access";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
@@ -46,7 +47,7 @@ export async function searchPlayers(teamId: string, query: string): Promise<{ ok
   const { data: team } = await supabase.from("teams").select("id, manager_id, tournament_id").eq("id", teamId).maybeSingle();
   if (!team) return { ok: false, error: "Team not found." };
   const { data: t } = await supabase.from("tournaments").select("city_id, organizer_id").eq("id", team.tournament_id).maybeSingle();
-  if (!t || (team.manager_id !== user.id && t.organizer_id !== user.id)) return { ok: false, error: "You can't manage this team." };
+  if (!t || (team.manager_id !== user.id && !(await canOrganize(supabase, team.tournament_id, user.id, t.organizer_id)))) return { ok: false, error: "You can't manage this team." };
 
   const admin = createAdminClient();
   const like = `%${q.replace(/[\\%_,()"]/g, " ")}%`;

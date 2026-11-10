@@ -46,7 +46,7 @@ type Props = { params: Promise<{ id: string }>; searchParams: Promise<Record<str
 export default async function ManageTournamentPage({ params, searchParams }: Props) {
   const { id } = await params;
   const sp = await searchParams;
-  const { tournament: t, userId } = await requireOwnedTournament(id);
+  const { tournament: t, userId, isOwner } = await requireOwnedTournament(id);
   const tab: TabKey = (TABS.find(([k]) => k === sp.tab)?.[0] ?? "overview") as TabKey;
   const base = `/organizer/tournaments/${t.id}`;
   const stepIndex = Math.max(0, FLOW.findIndex(([s]) => s === t.status));
@@ -89,7 +89,7 @@ export default async function ManageTournamentPage({ params, searchParams }: Pro
         {tab === "pool" && <PoolSection t={t} />}
         {tab === "announcements" && <AnnouncementsSection t={t} />}
         {tab === "plan" && <PlanSection t={t} />}
-        {tab === "settings" && <SettingsTab id={t.id} name={t.name} status={t.status} visibility={t.visibility} />}
+        {tab === "settings" && <SettingsSection t={t} isOwner={isOwner} />}
         {tab === "auction" && (showPool ? <AuctionSection t={t} /> : <Placeholder title="Auction" text="This tournament uses direct squads, so there is no auction." />)}
         {tab === "fixtures" && <FixturesSection t={t} />}
         {tab === "results" && <ResultsSection t={t} />}
@@ -345,6 +345,18 @@ async function PlanSection({ t }: { t: TournamentRow }) {
   );
 }
 
+async function SettingsSection({ t, isOwner }: { t: TournamentRow; isOwner: boolean }) {
+  const supabase = await createClient();
+  const { data: rows } = await supabase.from("tournament_assistants").select("user_id").eq("tournament_id", t.id).limit(5);
+  const ids = (rows ?? []).map((r) => r.user_id);
+  const { data: people } = ids.length ? await supabase.from("public_profiles").select("id, full_name, username").in("id", ids) : { data: [] };
+  const assistants = ids.map((uid) => {
+    const p = (people ?? []).find((x) => x.id === uid);
+    return { id: uid, name: p?.full_name ?? "Member", username: p?.username ?? null };
+  });
+  return <SettingsTab id={t.id} name={t.name} status={t.status} visibility={t.visibility} isOwner={isOwner} assistants={assistants} />;
+}
+
 async function FixturesSection({ t }: { t: TournamentRow }) {
   const supabase = await createClient();
   const [m, teams, st] = await Promise.all([
@@ -353,12 +365,13 @@ async function FixturesSection({ t }: { t: TournamentRow }) {
     supabase.from("standings").select("team_id, position").eq("tournament_id", t.id).order("position").limit(8),
   ]);
   const matches: FxMatch[] = (m.data ?? []).map((x) => ({ ...x, has_result: x.result_published_at !== null }));
-  const leagueMatches = matches.filter((x) => x.stage === "league");
-  const leagueDone = leagueMatches.length > 0 && (m.data ?? []).filter((x) => x.stage === "league").every((x) => x.result_published_at !== null);
+  const firstStage = t.format === "groups_knockout" ? "group" : "league";
+  const leagueMatches = matches.filter((x) => x.stage === firstStage);
+  const leagueDone = leagueMatches.length > 0 && leagueMatches.every((x) => x.has_result);
   const teamList = teams.data ?? [];
-  const top = (st.data ?? []).slice(0, t.playoff_style === "top2_final" ? 2 : 4).map((x) => teamList.find((tm) => tm.id === x.team_id)?.name ?? "");
+  const top = (st.data ?? []).slice(0, t.format === "groups_knockout" ? 0 : t.playoff_style === "top2_final" ? 2 : t.playoff_style === "top8_quarters" ? 8 : 4).map((x) => teamList.find((tm) => tm.id === x.team_id)?.name ?? "");
   const canGenerate = ["registration_closed", "auction", "squads_locked", "live"].includes(t.status) && teamList.length >= 3;
-  return <FixturesTab tournamentId={t.id} status={t.status} format={t.format} legs={t.league_legs} playoffStyle={t.playoff_style} thirdPlace={t.third_place_match} teamCount={t.team_count} teams={teamList} matches={matches} standingsTop={top.filter(Boolean)} canGenerate={canGenerate} leagueDone={leagueDone} defaultStart={t.start_date ?? ""} />;
+  return <FixturesTab tournamentId={t.id} status={t.status} format={t.format} legs={t.league_legs} playoffStyle={t.playoff_style} thirdPlace={t.third_place_match} groupCount={t.group_count} advancePerGroup={t.advance_per_group} teamCount={t.team_count} teams={teamList} matches={matches} standingsTop={top.filter(Boolean)} canGenerate={canGenerate} leagueDone={leagueDone} defaultStart={t.start_date ?? ""} />;
 }
 
 async function ResultsSection({ t }: { t: TournamentRow }) {

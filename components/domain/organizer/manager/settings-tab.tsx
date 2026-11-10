@@ -8,8 +8,64 @@ import { FormField } from "@/components/ui/form-field";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { toast } from "@/components/ui/toast";
 import { cancelTournament, deleteDraft } from "@/app/(app)/organizer/actions";
+import { addAssistant, removeAssistant, transferTournament } from "@/app/(app)/organizer/tournaments/[id]/access-actions";
 
-export function SettingsTab({ id, name, status, visibility }: { id: string; name: string; status: string; visibility: string }) {
+export interface Assistant { id: string; name: string; username: string | null }
+
+function AccessSection({ id, isOwner, assistants, finished }: { id: string; isOwner: boolean; assistants: Assistant[]; finished: boolean }) {
+  const router = useRouter();
+  const [uname, setUname] = React.useState("");
+  const [newOwner, setNewOwner] = React.useState("");
+  const [confirm, setConfirm] = React.useState(false);
+  const [busy, setBusy] = React.useState(false);
+  const [err, setErr] = React.useState<string | undefined>();
+
+  async function act(fn: () => Promise<{ ok: true } | { ok: false; error: string }>, okMsg: string) {
+    setBusy(true);
+    setErr(undefined);
+    const r = await fn();
+    setBusy(false);
+    if (!r.ok) { setErr(r.error); return false; }
+    toast({ title: okMsg });
+    router.refresh();
+    return true;
+  }
+
+  return (
+    <section className="rounded-card border border-line bg-card p-5">
+      <h2 className="font-display text-xl font-bold">Assistant organizers</h2>
+      <p className="mt-1 text-sm text-muted">Assistants can run the tournament day to day: teams, fixtures, results, auction and chat. They can&apos;t transfer, cancel ownership or add other assistants.</p>
+      <ul className="mt-3 flex flex-col gap-2">
+        {assistants.length === 0 && <li className="text-sm text-muted">No assistants yet.</li>}
+        {assistants.map((a) => (
+          <li key={a.id} className="flex items-center justify-between gap-3 rounded-input bg-surface px-3 py-2 text-sm">
+            <span><strong>{a.name}</strong> {a.username && <span className="text-muted">@{a.username}</span>}</span>
+            {isOwner && <Button variant="ghost" disabled={busy} onClick={() => act(() => removeAssistant(id, a.id), "Assistant removed")}>Remove</Button>}
+          </li>
+        ))}
+      </ul>
+      {isOwner && !finished && (
+        <div className="mt-4 grid max-w-xl gap-4">
+          <form className="flex items-end gap-2" onSubmit={async (e) => { e.preventDefault(); if (await act(() => addAssistant(id, uname), "Assistant added")) setUname(""); }}>
+            <div className="flex-1"><FormField id="asst-user" label="Add by username" error={err}><Input id="asst-user" value={uname} onChange={(e) => setUname(e.target.value)} placeholder="username" /></FormField></div>
+            <Button type="submit" disabled={busy || uname.trim().length < 3}>Add</Button>
+          </form>
+          <div className="rounded-input border border-danger/40 p-3">
+            <h3 className="font-semibold text-danger">Transfer ownership</h3>
+            <p className="mt-1 text-sm text-muted">The new owner takes over fully. You stay on as an assistant.</p>
+            <div className="mt-2 flex items-end gap-2">
+              <div className="flex-1"><FormField id="xfer-user" label="New owner's username"><Input id="xfer-user" value={newOwner} onChange={(e) => setNewOwner(e.target.value)} /></FormField></div>
+              <Button variant="destructive" disabled={busy || newOwner.trim().length < 3} onClick={() => setConfirm(true)}>Transfer</Button>
+            </div>
+            <ConfirmDialog open={confirm} onOpenChange={setConfirm} title="Transfer this tournament?" itemName={`@${newOwner.trim()}`} description="You will lose owner rights. This is recorded in the audit log." confirmLabel="Transfer" variant="destructive" onConfirm={async () => { await act(() => transferTournament(id, newOwner), "Ownership transferred"); }} />
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+export function SettingsTab({ id, name, status, visibility, isOwner, assistants }: { id: string; name: string; status: string; visibility: string; isOwner: boolean; assistants: Assistant[] }) {
   const router = useRouter();
   const [reason, setReason] = React.useState("");
   const [typed, setTyped] = React.useState("");
@@ -43,6 +99,7 @@ export function SettingsTab({ id, name, status, visibility }: { id: string; name
         <h2 className="font-display text-xl font-bold">Visibility</h2>
         <p className="mt-1 text-sm text-muted">Currently <strong className="text-ink">{visibility}</strong>. Change it in the Setup tab.</p>
       </section>
+      <AccessSection id={id} isOwner={isOwner} assistants={assistants} finished={finished} />
       {!finished && status !== "draft" && (
         <section className="rounded-card border border-danger/40 bg-card p-5">
           <h2 className="font-display text-xl font-bold text-danger">Cancel tournament</h2>

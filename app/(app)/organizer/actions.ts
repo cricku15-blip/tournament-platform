@@ -90,7 +90,7 @@ export async function saveDraft(id: string | null, step: number, values: StepVal
     const p = formatSchema.safeParse(values);
     if (!p.success) return issue(p.error);
     const v = p.data;
-    cols = { format: v.format, team_count: v.teamCount, league_legs: v.leagueLegs, playoff_style: v.format === "league_playoffs" ? v.playoffStyle : null, third_place_match: v.thirdPlaceMatch, seeding_method: v.seedingMethod };
+    cols = { format: v.format, team_count: v.teamCount, league_legs: v.leagueLegs, playoff_style: v.format === "league_playoffs" ? v.playoffStyle : null, third_place_match: v.thirdPlaceMatch, seeding_method: v.seedingMethod, group_count: v.format === "groups_knockout" ? v.groupCount : null, advance_per_group: v.format === "groups_knockout" ? v.advancePerGroup : null } as never;
   } else if (step === 3) {
     const p = rulesSchemaFor(sportSlug).safeParse(values);
     if (!p.success) return issue(p.error);
@@ -166,7 +166,7 @@ export async function duplicateTournament(id: string): Promise<ActionResult<{ id
   const copy = {
     organizer_id: user.id, name: `${t.name} (copy)`.slice(0, 80), slug: `${t.slug}-${suffix}`.slice(0, 60),
     sport_id: t.sport_id, city_id: t.city_id, venue_name: t.venue_name, venue_address: t.venue_address,
-    format: t.format, team_count: t.team_count, league_legs: t.league_legs, playoff_style: t.playoff_style,
+    format: t.format, team_count: t.team_count, league_legs: t.league_legs, playoff_style: t.playoff_style, group_count: t.group_count, advance_per_group: t.advance_per_group,
     third_place_match: t.third_place_match, seeding_method: t.seeding_method, rules: nn(t.rules, {}),
     squad_mode: t.squad_mode, squad_min: t.squad_min, squad_max: t.squad_max, player_pool_cap: t.player_pool_cap,
     team_entry: t.team_entry, allow_player_applications: t.allow_player_applications, custom_questions: nn(t.custom_questions, []),

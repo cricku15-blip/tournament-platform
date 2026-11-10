@@ -113,6 +113,7 @@ const FORMATS = [
   { v: "league", title: "League", text: "Everyone plays everyone. Points table decides the winner.", diagram: "A B C D → table" },
   { v: "knockout", title: "Knockout", text: "Lose and you're out. Winners advance to the final.", diagram: "A·B  C·D → final" },
   { v: "league_playoffs", title: "League then playoffs", text: "Round robin first, then the top teams play off.", diagram: "table → top 4 → final" },
+  { v: "groups_knockout", title: "Groups then knockout", text: "Teams split into groups, the best of each group go into a knockout.", diagram: "A B C D → R16 → final" },
 ] as const;
 
 export function FormatStep(p: StepProps) {
@@ -120,18 +121,18 @@ export function FormatStep(p: StepProps) {
   const maxTeams = Math.max(...p.tiers.map((t) => t.max_teams), 3);
   const minTeams = Math.min(...p.tiers.map((t) => t.min_teams), 3);
   const tier = p.tiers.find((t) => d.teamCount >= t.min_teams && d.teamCount <= t.max_teams);
-  const count = countMatches({ format: d.format, teams: d.teamCount, legs: d.leagueLegs, playoffStyle: d.playoffStyle, thirdPlace: d.thirdPlaceMatch });
+  const count = countMatches({ format: d.format, teams: d.teamCount, legs: d.leagueLegs, playoffStyle: d.playoffStyle, thirdPlace: d.thirdPlaceMatch, groupCount: d.groupCount, advancePerGroup: d.advancePerGroup });
   const football = sportSlug(p) === "football";
   return (
     <Group>
-      <div role="radiogroup" aria-label="Tournament format" className="grid gap-3 md:grid-cols-3">
+      <div role="radiogroup" aria-label="Tournament format" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {FORMATS.map((f) => (
           <button
             key={f.v}
             type="button"
             role="radio"
             aria-checked={d.format === f.v}
-            onClick={() => patch({ format: f.v, playoffStyle: f.v === "league_playoffs" ? d.playoffStyle ?? "top4_semis" : null })}
+            onClick={() => patch({ format: f.v, playoffStyle: f.v === "league_playoffs" ? d.playoffStyle ?? "top4_semis" : null, groupCount: f.v === "groups_knockout" ? d.groupCount ?? 2 : null, advancePerGroup: f.v === "groups_knockout" ? d.advancePerGroup ?? 2 : null })}
             className={cn("min-h-11 rounded-card border p-4 text-left focus-visible:outline-2 focus-visible:outline-primary", d.format === f.v ? "border-primary bg-primary/10" : "border-line bg-card")}
           >
             <span className="block font-display text-lg font-bold">{f.title}</span>
@@ -166,18 +167,28 @@ export function FormatStep(p: StepProps) {
               options={[
                 { value: "top2_final", label: "Top 2 play the final" },
                 { value: "top4_semis", label: "Top 4 semi-finals" },
-                ...(!football ? [{ value: "qualifier_style", label: "Top 4 qualifier style" }] : []),
+                ...(football ? [{ value: "top8_quarters", label: "Top 8 quarter-finals" }] : [{ value: "qualifier_style", label: "Top 4 qualifier style" }]),
               ]}
             />
           </FormField>
         )}
-        {d.format === "knockout" && (
+        {d.format === "groups_knockout" && (
+          <>
+            <FormField id="w-groups" label="Number of groups" required error={errors.groupCount}>
+              <Select2 id="w-groups" value={String(d.groupCount ?? 2)} onChange={(v) => patch({ groupCount: Number(v) })} options={[2, 3, 4, 6, 8].map((n) => ({ value: String(n), label: `${n} groups` }))} />
+            </FormField>
+            <FormField id="w-advance" label="Teams advancing per group" required>
+              <Select2 id="w-advance" value={String(d.advancePerGroup ?? 2)} onChange={(v) => patch({ advancePerGroup: v === "1" ? 1 : 2 })} options={[{ value: "1", label: "Group winner only" }, { value: "2", label: "Top 2 of each group" }]} />
+            </FormField>
+          </>
+        )}
+        {(d.format === "knockout" || d.format === "groups_knockout") && (
           <FormField id="w-seed" label="Seeding">
             <Select2 id="w-seed" value={d.seedingMethod} onChange={(v) => patch({ seedingMethod: v as DraftState["seedingMethod"] })} options={[{ value: "random", label: "Random" }, { value: "manual", label: "Manual (you set the order)" }]} />
           </FormField>
         )}
       </div>
-      {d.format === "knockout" && football && <ToggleRow id="w-third" label="Third place match" checked={d.thirdPlaceMatch} onChange={(v) => patch({ thirdPlaceMatch: v })} />}
+      {(d.format === "knockout" || d.format === "groups_knockout") && football && <ToggleRow id="w-third" label="Third place match" checked={d.thirdPlaceMatch} onChange={(v) => patch({ thirdPlaceMatch: v })} />}
 
       <section aria-label="Calculated matches" className="rounded-card border border-line bg-surface p-4" aria-live="polite">
         <p className="text-sm text-muted">Total matches</p>

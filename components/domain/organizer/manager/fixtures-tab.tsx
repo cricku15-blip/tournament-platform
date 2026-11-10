@@ -31,12 +31,12 @@ export interface FxMatch {
 }
 export interface FxTeam { id: string; name: string }
 
-const STAGE: Record<string, string> = { league: "League", semi: "Semi-finals", final: "Final", third_place: "Third place", qualifier1: "Qualifier 1", qualifier2: "Qualifier 2", eliminator: "Eliminator", quarter: "Quarter-finals" };
+const STAGE: Record<string, string> = { league: "League", group: "Group stage", semi: "Semi-finals", final: "Final", third_place: "Third place", qualifier1: "Qualifier 1", qualifier2: "Qualifier 2", eliminator: "Eliminator", quarter: "Quarter-finals" };
 
 export function FixturesTab({
-  tournamentId, status, format, legs, playoffStyle, thirdPlace, teamCount, teams, matches, standingsTop, canGenerate, leagueDone, defaultStart,
+  tournamentId, status, format, legs, playoffStyle, thirdPlace, groupCount, advancePerGroup, teamCount, teams, matches, standingsTop, canGenerate, leagueDone, defaultStart,
 }: {
-  tournamentId: string; status: string; format: string; legs: number; playoffStyle: string | null; thirdPlace: boolean; teamCount: number;
+  tournamentId: string; status: string; format: string; legs: number; playoffStyle: string | null; thirdPlace: boolean; groupCount: number | null; advancePerGroup: number | null; teamCount: number;
   teams: FxTeam[]; matches: FxMatch[]; standingsTop: string[]; canGenerate: boolean; leagueDone: boolean; defaultStart: string;
 }) {
   const router = useRouter();
@@ -53,7 +53,7 @@ export function FixturesTab({
   const [edit, setEdit] = React.useState<FxMatch | null>(null);
   const [confirmRegen, setConfirmRegen] = React.useState(false);
   const nameOf = (id: string | null, label: string | null) => teams.find((t) => t.id === id)?.name ?? label ?? "TBD";
-  const total = countMatches({ format: format as "league", teams: teams.length || teamCount, legs: legs === 2 ? 2 : 1, playoffStyle: (playoffStyle as PlayoffStyle) ?? null, thirdPlace });
+  const total = countMatches({ format: format as "league", teams: teams.length || teamCount, legs: legs === 2 ? 2 : 1, playoffStyle: (playoffStyle as PlayoffStyle) ?? null, thirdPlace, groupCount, advancePerGroup });
   const published = matches.filter((m) => m.fixture_published).length;
   const hasResults = matches.some((m) => m.has_result);
 
@@ -86,7 +86,7 @@ export function FixturesTab({
 
   const groups = new Map<string, FxMatch[]>();
   for (const m of matches) {
-    const key = m.stage === "league" ? `League · Round ${m.round_no ?? 1}` : STAGE[m.stage] ?? m.stage;
+    const key = m.stage === "league" ? `League · Round ${m.round_no ?? 1}` : m.stage === "group" ? `Group stage · Round ${m.round_no ?? 1}` : STAGE[m.stage] ?? m.stage;
     groups.set(key, [...(groups.get(key) ?? []), m]);
   }
   const moveTeam = (i: number, d: -1 | 1) => {
@@ -107,7 +107,7 @@ export function FixturesTab({
         <Button onClick={() => { setMode("generate"); if (matches.length) setConfirmRegen(true); else setGenOpen(true); }} disabled={!canGenerate || hasResults} title={hasResults ? "Results exist, fixtures can't be regenerated" : undefined}>
           {matches.length ? "Regenerate" : "Generate fixtures"}
         </Button>
-        {format === "league_playoffs" && (
+        {(format === "league_playoffs" || format === "groups_knockout") && (
           <Button variant="secondary" disabled={!leagueDone || !canGenerate} onClick={() => { setMode("playoffs"); setGenOpen(true); }}>Start playoffs</Button>
         )}
         {matches.length > 0 && (
@@ -149,7 +149,7 @@ export function FixturesTab({
         <SheetContent>
           <SheetHeader><SheetTitle>{mode === "generate" ? "Generate fixtures" : "Start playoffs"}</SheetTitle></SheetHeader>
           <div className="mt-4 flex flex-col gap-4 text-sm">
-            <p className="rounded-input bg-surface p-3">{mode === "generate" ? `${format.replace("_", " ")} with ${teams.length} teams: ${total.league + (format === "knockout" ? total.playoffs : 0)} matches${format === "league_playoffs" ? ` now, ${total.playoffs} more in the playoffs` : ""}.` : `Qualifying teams: ${standingsTop.join(", ") || "from the table"}.`}</p>
+            <p className="rounded-input bg-surface p-3">{mode === "generate" ? `${format.replace("_", " ")} with ${teams.length} teams: ${total.league + (format === "knockout" ? total.playoffs : 0)} matches${format === "league_playoffs" || format === "groups_knockout" ? ` now, ${total.playoffs} more in the knockout` : ""}.` : format === "groups_knockout" ? `The ${advancePerGroup === 1 ? "winner" : "top 2"} of each group go through, crossed so group-mates meet late.` : `Qualifying teams: ${standingsTop.join(", ") || "from the table"}.`}</p>
             <label>Start date<Input type="date" value={start} onChange={(e) => setStart(e.target.value)} /></label>
             <label>Matches per day (limited to what avoids one team playing twice)<Input type="number" min={1} max={6} value={perDay} onChange={(e) => setPerDay(Math.max(1, Number(e.target.value) || 1))} /></label>
             <label>Time slots (HH:MM, comma separated)<Input value={times} onChange={(e) => setTimes(e.target.value)} /></label>

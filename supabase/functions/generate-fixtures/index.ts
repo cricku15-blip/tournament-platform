@@ -3,7 +3,7 @@
 // Writes unpublished matches. The organizer reviews them, then flips matches.fixture_published to true.
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { adminClient, getUser, isAdmin, json, handleOptions } from "../_shared/clients.ts";
-import { roundRobin, knockoutTree, shuffle, scheduleSlots, addDays } from "../_shared/fixtures.ts";
+import { roundRobin, knockoutTree, shuffle, scheduleSlots, addDays, splitIntoGroups, groupKnockoutSeeds } from "../_shared/fixtures.ts";
 
 serve(async (req) => {
   const pre = handleOptions(req); if (pre) return pre;
@@ -50,6 +50,23 @@ serve(async (req) => {
         return json({ ok: true, matches: rows.length });
       }
 
+      if (t.format === "groups_knockout") {
+        const gc: number = t.group_count ?? 2;
+        if (ids.length < gc * 2) return json({ error: "too_few_teams_for_groups" }, 422);
+        const groups = splitIntoGroups(order, gc);
+        for (let g = 0; g < groups.length; g++) await sb.from("teams").update({ group_no: g + 1 }).in("id", groups[g]);
+        const gp = groups.map((members, g) => roundRobin(members, t.league_legs === 2 ? 2 : 1).map((p) => ({ ...p, g: g + 1 })));
+        const maxRounds = Math.max(...gp.map((x) => x.reduce((m, p) => Math.max(m, p.round), 0)));
+        const flat: { round: number; a: string; b: string; g: number }[] = [];
+        for (let r = 1; r <= maxRounds; r++) for (const list of gp) for (const p of list) if (p.round === r) flat.push(p);
+        const perDay = Math.max(1, Math.min(options.matches_per_day ?? 2, Math.floor(ids.length / 2)));
+        const slots = scheduleSlots(flat.length, startDate, perDay, times);
+        const rows = flat.map((p, i) => cleanRow({ stage: "group", group_no: p.g, round_no: p.round, match_no: i + 1, team_a_id: p.a, team_b_id: p.b, scheduled_at: slots[i], venue: venueFor(i) }));
+        const { error } = await sb.from("matches").insert(rows);
+        if (error) throw error;
+        return json({ ok: true, matches: rows.length });
+      }
+
       // Knockout
       const { nodes, rounds } = knockoutTree(order);
       const real = nodes.filter((n) => !n.bye).sort((x, y) => x.round - y.round || x.index - y.index);
@@ -86,15 +103,54 @@ serve(async (req) => {
     }
 
     if (action === "playoffs") {
-      if (t.format !== "league_playoffs") return json({ error: "not_playoff_format" }, 422);
-      const { count: open } = await sb.from("matches").select("id", { count: "exact", head: true }).eq("tournament_id", t.id).eq("stage", "league").is("result_published_at", null);
+      if (t.format !== "league_playoffs" && t.format !== "groups_knockout") return json({ error: "not_playoff_format" }, 422);
+      const groupStage = t.format === "groups_knockout" ? "group" : "league";
+      const { count: open } = await sb.from("matches").select("id", { count: "exact", head: true }).eq("tournament_id", t.id).eq("stage", groupStage).is("result_published_at", null);
       if ((open ?? 0) > 0) return json({ error: "league_not_finished" }, 409);
-      const { count: playedPO } = await sb.from("matches").select("id", { count: "exact", head: true }).eq("tournament_id", t.id).neq("stage", "league").not("result_published_at", "is", null);
+      const { count: playedPO } = await sb.from("matches").select("id", { count: "exact", head: true }).eq("tournament_id", t.id).neq("stage", groupStage).not("result_published_at", "is", null);
       if ((playedPO ?? 0) > 0) return json({ error: "results_exist" }, 409);
-      await sb.from("matches").delete().eq("tournament_id", t.id).neq("stage", "league");
+      await sb.from("matches").delete().eq("tournament_id", t.id).neq("stage", groupStage);
 
-      const { data: st } = await sb.from("standings").select("team_id").eq("tournament_id", t.id).order("position", { ascending: true });
+      const { data: st } = await sb.from("standings").select("team_id, group_no").eq("tournament_id", t.id).order("position", { ascending: true });
       const p = (st ?? []).map((x) => x.team_id as string);
+      if (t.format === "groups_knockout") {
+        const gc: number = t.group_count ?? 2;
+        const adv: 1 | 2 = t.advance_per_group === 1 ? 1 : 2;
+        const ranked: string[][] = Array.from({ length: gc }, () => []);
+        for (const x of st ?? []) if (x.group_no) ranked[x.group_no - 1]?.push(x.team_id as string);
+        const seeds = groupKnockoutSeeds(ranked, adv);
+        if (seeds.length < 2) return json({ error: "not_enough_teams" }, 422);
+        const { data: lastM } = await sb.from("matches").select("scheduled_at, match_no").eq("tournament_id", t.id).order("match_no", { ascending: false }).limit(1).single();
+        const ko0: string = options.start_date ?? addDays((lastM?.scheduled_at ?? new Date().toISOString()).slice(0, 10), 1);
+        const { nodes, rounds } = knockoutTree(seeds);
+        const real = nodes.filter((n) => !n.bye).sort((x, y) => x.round - y.round || x.index - y.index);
+        const withThird = !!t.third_place_match && rounds >= 2;
+        const per = Math.max(1, Math.min(options.matches_per_day ?? 2, 4));
+        const sl = scheduleSlots(real.length + (withThird ? 1 : 0), ko0, per, times);
+        const base = lastM?.match_no ?? 0;
+        let si = 0;
+        const kr: Record<string, unknown>[] = [];
+        for (const n of real) {
+          if (withThird && n.stage === "final") { kr.push(cleanRow({ stage: "third_place", round_no: n.round, match_no: base + real.length + 1, label_a: "Loser of semi 1", label_b: "Loser of semi 2", scheduled_at: sl[si], venue: venueFor(si) })); si++; }
+          kr.push(cleanRow({ stage: n.stage, round_no: n.round, match_no: base + n.matchNo!, team_a_id: n.a, team_b_id: n.b,
+            label_a: n.fromA ? `Winner of match ${base + n.fromA.matchNo!}` : null, label_b: n.fromB ? `Winner of match ${base + n.fromB.matchNo!}` : null,
+            scheduled_at: sl[si], venue: venueFor(si) })); si++;
+        }
+        const { data: ins2, error: e2 } = await sb.from("matches").insert(kr).select("id, match_no");
+        if (e2) throw e2;
+        const byNo = new Map(ins2!.map((m) => [m.match_no, m.id]));
+        for (const parent of real) {
+          for (const [child, slot] of [[parent.fromA, "a"], [parent.fromB, "b"]] as const) {
+            if (child?.matchNo) await sb.from("matches").update({ next_match_id: byNo.get(base + parent.matchNo!), next_slot: slot }).eq("id", byNo.get(base + child.matchNo));
+          }
+        }
+        if (withThird) {
+          const thirdId = byNo.get(base + real.length + 1);
+          const semis = real.filter((n) => n.stage === "semi");
+          for (let i = 0; i < semis.length; i++) await sb.from("matches").update({ loser_next_match_id: thirdId, loser_next_slot: i === 0 ? "a" : "b" }).eq("id", byNo.get(base + semis[i].matchNo!));
+        }
+        return json({ ok: true, matches: kr.length });
+      }
       const { data: last } = await sb.from("matches").select("scheduled_at, match_no").eq("tournament_id", t.id).order("match_no", { ascending: false }).limit(1).single();
       const start: string = options.start_date ?? addDays((last?.scheduled_at ?? new Date().toISOString()).slice(0, 10), 1);
       const style: string = t.playoff_style ?? "top4_semis";
@@ -107,6 +163,11 @@ serve(async (req) => {
       if (style === "top2_final") {
         if (p.length < 2) return json({ error: "not_enough_teams" }, 422);
         rows = [mk("final", 1, 0, 0, p[0], p[1])];
+      } else if (style === "top8_quarters") {
+        if (p.length < 8) return json({ error: "not_enough_teams" }, 422);
+        rows = [mk("quarter", 1, 0, 0, p[0], p[7]), mk("quarter", 1, 0, 1, p[3], p[4]), mk("quarter", 1, 1, 0, p[1], p[6]), mk("quarter", 1, 1, 1, p[2], p[5]),
+                mk("semi", 2, 2, 0, null, null, "Winner of QF 1", "Winner of QF 2"), mk("semi", 2, 2, 1, null, null, "Winner of QF 3", "Winner of QF 4"),
+                mk("final", 3, 3, 0, null, null, "Winner of Semi 1", "Winner of Semi 2")];
       } else if (style === "qualifier_style") {
         if (p.length < 4) return json({ error: "not_enough_teams" }, 422);
         rows = [mk("qualifier1", 1, 0, 0, p[0], p[1]), mk("eliminator", 1, 0, 1, p[2], p[3]),
@@ -125,6 +186,10 @@ serve(async (req) => {
         await link(by("qualifier1"), { next_match_id: by("final"), next_slot: "a", loser_next_match_id: by("qualifier2"), loser_next_slot: "a" });
         await link(by("eliminator"), { next_match_id: by("qualifier2"), next_slot: "b" });
         await link(by("qualifier2"), { next_match_id: by("final"), next_slot: "b" });
+      } else if (style === "top8_quarters") {
+        for (let i = 0; i < 4; i++) await link(by("quarter", i), { next_match_id: by("semi", Math.floor(i / 2)), next_slot: i % 2 === 0 ? "a" : "b" });
+        await link(by("semi", 0), { next_match_id: by("final"), next_slot: "a" });
+        await link(by("semi", 1), { next_match_id: by("final"), next_slot: "b" });
       } else if (style !== "top2_final") {
         await link(by("semi", 0), { next_match_id: by("final"), next_slot: "a" });
         await link(by("semi", 1), { next_match_id: by("final"), next_slot: "b" });

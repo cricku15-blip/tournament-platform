@@ -51,6 +51,7 @@ export default async function AdminUser({ params }: { params: Promise<{ id: stri
             <ReasonAction label="Restore" variant="primary" action={(i) => setUserStatus(id, { status: "active", reason: i.reason })} />
           )}
           <ReasonAction label="Change city" fields={[{ name: "cityId", label: "New city", type: "select", options: (cities.data ?? []).map((c) => ({ value: c.id, label: c.name })), required: true }]} action={(i) => changeUserCity(id, { cityId: i.cityId, reason: i.reason })} />
+          <Link href={`/admin/users/${id}/view-as`} className="inline-flex min-h-11 items-center rounded-btn border border-line px-4 text-sm font-semibold hover:bg-surface">View as user (read-only)</Link>
           <ReasonAction label="Send email" fields={[{ name: "subject", label: "Subject", required: true }, { name: "body", label: "Message", type: "textarea", required: true }]} action={(i) => sendUserEmail(id, { subject: i.subject, body: i.body, reason: i.reason })} />
         </div>
       </Panel>

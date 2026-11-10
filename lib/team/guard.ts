@@ -1,6 +1,7 @@
 import "server-only";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { canOrganize } from "@/lib/organizer/access";
 import { getProfile, getSessionUser } from "@/lib/session";
 import type { Database } from "@/types/supabase";
 
@@ -19,7 +20,7 @@ export async function requireTeamAccess(teamId: string): Promise<{ team: TeamRow
   const { data: tournament } = await supabase.from("tournaments").select("*").eq("id", team.tournament_id).maybeSingle();
   if (!tournament) notFound();
   const profile = await getProfile();
-  const access: TeamAccess | null = team.manager_id === user.id ? "manager" : tournament.organizer_id === user.id ? "organizer" : profile?.is_admin ? "admin" : null;
+  const access: TeamAccess | null = team.manager_id === user.id ? "manager" : (await canOrganize(supabase, tournament.id, user.id, tournament.organizer_id)) ? "organizer" : profile?.is_admin ? "admin" : null;
   if (!access) notFound();
   return { team, tournament, access, userId: user.id };
 }

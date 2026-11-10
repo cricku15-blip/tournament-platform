@@ -1,3 +1,4 @@
+import { ownedOrAssistedFilter } from "@/lib/organizer/access";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -24,7 +25,7 @@ export default async function OrganizerHome() {
   const { data } = await supabase
     .from("tournaments")
     .select("id, name, status, start_date, approved_team_count, approved_player_count, team_count, squad_mode")
-    .eq("organizer_id", user.id)
+    .or(await ownedOrAssistedFilter(supabase, user.id))
     .neq("status", "cancelled")
     .order("start_date", { ascending: true, nullsFirst: false })
     .limit(100);

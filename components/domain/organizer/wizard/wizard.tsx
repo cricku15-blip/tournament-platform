@@ -29,7 +29,7 @@ export function stepValues(step: number, d: DraftState): Record<string, unknown>
     case 1:
       return { name: d.name, slug: d.slug, sportId: d.sportId, cityId: d.cityId, venueName: d.venueName, venueAddress: d.venueAddress, startDate: d.startDate, endDate: d.endDate, bannerUrl: d.bannerUrl, logoUrl: d.logoUrl, descriptionShort: d.descriptionShort, descriptionFull: d.descriptionFull };
     case 2:
-      return { format: d.format, teamCount: d.teamCount, leagueLegs: d.leagueLegs, playoffStyle: d.playoffStyle, thirdPlaceMatch: d.thirdPlaceMatch, seedingMethod: d.seedingMethod };
+      return { format: d.format, teamCount: d.teamCount, leagueLegs: d.leagueLegs, playoffStyle: d.playoffStyle, thirdPlaceMatch: d.thirdPlaceMatch, seedingMethod: d.seedingMethod, groupCount: d.groupCount, advancePerGroup: d.advancePerGroup };
     case 3:
       return d.rules;
     case 4:

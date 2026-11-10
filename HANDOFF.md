@@ -130,3 +130,11 @@ _none yet_
 - New fonts: Outfit (headings) and Plus Jakarta Sans (body). Radii are rounder (cards 20 px, inputs and buttons 12 px). Buttons: gradient primary with glow, glass secondary. Headers are glass. Landing hero rebuilt (gradient headline, demo scoreboard, live auction and points table cards).
 - RULES.md and CLAUDE.md updated so the old font and color rules no longer contradict the new design. Amber stays reserved for live states.
 - Checked visually with screenshots of Home, Login, Pricing and Tournaments in both themes at desktop width and Home at phone width. Other pages inherit the tokens but were not individually reviewed; tell me which pages still look off.
+
+## Plan 11 Handoff Details (extras: assistants, transfer, view-as, groups)
+- Migration 0018: `tournament_assistants`, `is_tournament_organizer` now includes assistants (owner-only checks use `is_tournament_owner` / `_require_owner`), existing RPC organizer checks are rewritten in place by a DO block, `add_assistant` / `remove_assistant` / `transfer_tournament` RPCs (audited, notify), `groups_knockout` enum value, `group_count`, `advance_per_group`, `group_no` columns, group-aware `recompute_standings`, `public_tournaments` view gains the two group columns.
+- Assistants: max 2, can do everything an organizer can except transfer, add/remove assistants, delete draft. App code uses `lib/organizer/access.ts` (`canOrganize`, `ownedOrAssistedFilter`). Settings tab has the access section.
+- Groups: wizard format "Groups then knockout" (2 to 8 groups, 1 or 2 advance). `generate-fixtures` snake-splits teams into groups, writes `group` stage round robins, and the `playoffs` action builds a knockout where group-mates meet late (`groupKnockoutSeeds`, tested). Football gets "Top 8 quarter-finals" for league + playoffs. Public standings shows one table per group.
+- Admin "View as user": `/admin/users/[id]/view-as`, read-only (no session swap), mandatory reason, written to `audit_log` as `impersonation_view`.
+- `types/supabase.ts` was hand-patched for the new columns/table/enum; regenerate after applying 0018. The RPC calls for the new functions use `as never` until then.
+- Not done: unit/RLS tests for assistants against a real DB (no DB with 0018 yet).
