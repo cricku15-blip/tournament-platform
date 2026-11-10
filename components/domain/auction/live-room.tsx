@@ -33,6 +33,19 @@ export function LiveRoom({
     } catch {}
   }, [tournamentId]);
 
+  const auctioneerHere = online.includes("auctioneer");
+  const [waitingForAuctioneer, setWaiting] = React.useState(false);
+  React.useEffect(() => {
+    if (!myTeam || state.status !== "live" || auctioneerHere) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- the auctioneer is here (or n/a): nothing to wait for
+      setWaiting(false);
+      return;
+    }
+    // The console is absent: wait 10 minutes before telling managers.
+    const t = setTimeout(() => setWaiting(true), 10 * 60 * 1000);
+    return () => clearTimeout(t);
+  }, [auctioneerHere, myTeam, state.status]);
+
   const mine = myTeam ? state.purses[myTeam.id] ?? null : null;
   const blocked = bidBlockReason({ connected: connection === "connected", status: state.status, lot: state.lot, myTeamId: myTeam?.id ?? null, purse: mine, squadMax, inFlight });
   const isLive = state.status === "live" || state.status === "paused";
@@ -78,6 +91,7 @@ export function LiveRoom({
         <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
           <div className="flex flex-col gap-4">
             {state.status === "paused" && <p role="status" className="rounded-input border border-floodlight/60 bg-floodlight/15 p-3 text-center font-semibold">Auction paused. Bidding resumes shortly.</p>}
+            {waitingForAuctioneer && <p role="status" className="rounded-input border border-line bg-surface p-3 text-center text-sm">Waiting for the auctioneer…</p>}
             <LotCard state={state} highlightPlayerId={myPlayerId} />
 
             {myTeam ? (
