@@ -51,14 +51,18 @@ export const basicsSchema = z
 /* ----- Step 2 ----- */
 export const formatSchema = z
   .object({
-    format: z.enum(["league", "knockout", "league_playoffs"]),
+    format: z.enum(["league", "knockout", "league_playoffs", "groups_knockout"]),
     teamCount: z.number().int().min(3, "At least 3 teams."),
     leagueLegs: z.union([z.literal(1), z.literal(2)]),
-    playoffStyle: z.enum(["top2_final", "top4_semis", "qualifier_style"]).nullable().optional(),
+    playoffStyle: z.enum(["top2_final", "top4_semis", "qualifier_style", "top8_quarters"]).nullable().optional(),
     thirdPlaceMatch: z.boolean(),
     seedingMethod: z.enum(["random", "manual"]),
+    groupCount: z.number().int().min(2).max(8).nullable().optional(),
+    advancePerGroup: z.union([z.literal(1), z.literal(2)]).nullable().optional(),
   })
-  .refine((v) => v.format !== "league_playoffs" || !!v.playoffStyle, { path: ["playoffStyle"], message: "Choose a playoff style." });
+  .refine((v) => v.format !== "league_playoffs" || !!v.playoffStyle, { path: ["playoffStyle"], message: "Choose a playoff style." })
+  .refine((v) => v.format !== "groups_knockout" || (!!v.groupCount && !!v.advancePerGroup), { path: ["groupCount"], message: "Choose the number of groups and how many advance." })
+  .refine((v) => v.format !== "groups_knockout" || !v.groupCount || v.teamCount >= v.groupCount * 2, { path: ["groupCount"], message: "Each group needs at least 2 teams." });
 
 /* ----- Step 3: rules come from sport config, stored in tournaments.rules ----- */
 const points = z.object({ win: z.number().int().min(0).max(10), tie: z.number().int().min(0).max(10).optional(), draw: z.number().int().min(0).max(10).optional(), no_result: z.number().int().min(0).max(10).optional(), loss: z.number().int().min(0).max(10).optional() });

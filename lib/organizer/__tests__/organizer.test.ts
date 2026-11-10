@@ -56,3 +56,29 @@ describe("schemas", () => {
     expect(validateSlabs([{ from: 10, to: null, step: 5 }])).toMatch(/start at 0/);
   });
 });
+
+import { groupKnockoutSeeds, splitIntoGroups, knockoutTree } from "../../../supabase/functions/_shared/fixtures";
+
+describe("groups + knockout", () => {
+  it("splits teams into balanced groups", () => {
+    const g = splitIntoGroups(["1", "2", "3", "4", "5", "6", "7", "8", "9"], 4);
+    expect(g.map((x) => x.length).sort()).toEqual([2, 2, 2, 3]);
+    expect(new Set(g.flat()).size).toBe(9);
+  });
+  it("never pairs two teams of the same group in the first knockout round", () => {
+    for (const k of [2, 3, 4, 6, 8]) {
+      const ranked = Array.from({ length: k }, (_, g) => [`W${g}`, `R${g}`]);
+      const seeds = groupKnockoutSeeds(ranked, 2);
+      const { nodes } = knockoutTree(seeds);
+      for (const n of nodes.filter((x) => x.round === 1 && x.a && x.b)) {
+        expect(n.a!.slice(1)).not.toBe(n.b!.slice(1));
+      }
+    }
+  });
+  it("counts group matches and the knockout", () => {
+    const c = countMatches({ format: "groups_knockout", teams: 8, legs: 1, groupCount: 2, advancePerGroup: 2 });
+    expect(c.league).toBe(12);
+    expect(c.playoffs).toBe(3);
+    expect(countMatches({ format: "league_playoffs", teams: 8, legs: 1, playoffStyle: "top8_quarters" }).playoffs).toBe(7);
+  });
+});

@@ -14,6 +14,7 @@ Never put passwords or keys in chat or in git. Secrets go only in `.env` (gitign
 - [ ] Razorpay webhook URL to paste in Razorpay dashboard > Webhooks: `https://rljkmcncpsqigwmdbykb.supabase.co/functions/v1/razorpay-webhook` (events: payment.captured, order.paid, subscription.*, refund.*).
 
 ## Soon
+- [ ] **Apply migration 0018** (assistant organizers, ownership transfer, group stage format, football quarter-finals, public view columns) with `supabase db push`, then `npm run db:types`. Until then the Settings tab access section, groups format and "view as" will error. Also redeploy the `generate-fixtures` Edge Function (`supabase functions deploy generate-fixtures`).
 - [ ] **Apply migration 0017** (admin support: suspension end dates, tournament notes, dashboard RPC) with `supabase db push`, then tell Claude to regenerate types. Until then the admin dashboard tiles are blank.
 - [ ] Create a **staging** Supabase project and run `scripts/seed-staging.sql`, then the k6 tests in `loadtest/` (Claude can help read the results).
 - [ ] **Apply migration 0016** (simple-mode auction sales and reminder flags): `supabase db push`, then tell Claude to regenerate `types/supabase.ts`. Needed before simple-mode auctions or `send-reminders` work.

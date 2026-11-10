@@ -22,6 +22,7 @@ export const FORMAT_LABEL: Record<string, string> = {
   league: "League",
   knockout: "Knockout",
   league_playoffs: "League + playoffs",
+  groups_knockout: "Groups + knockout",
 };
 
 export function sportEdgeClass(slug: string): string {

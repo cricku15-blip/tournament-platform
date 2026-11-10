@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     supabase.rpc("has_active_subscription", { uid: user.id }),
     supabase.from("player_applications").select("status").eq("tournament_id", id).eq("user_id", user.id).maybeSingle(),
     supabase.from("teams").select("id, status").eq("tournament_id", id).eq("manager_id", user.id).maybeSingle(),
-    supabase.from("tournaments").select("id").eq("id", id).eq("organizer_id", user.id).maybeSingle(),
+    supabase.rpc("is_tournament_organizer", { tid: id }),
   ]);
 
   const eligibility = applyEligibility({
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       subscribed: sub.data === true,
       applicationStatus: application.data?.status ?? null,
       teamStatus: team.data?.status ?? null,
-      isOrganizer: Boolean(owner.data),
+      isOrganizer: owner.data === true,
     },
     { headers }
   );

@@ -10,6 +10,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { revalidateTournament } from "@/lib/public/revalidate";
 import { resultSchema, type ResultPayload } from "@/lib/results/schema";
 import type { Json } from "@/types/supabase";
+import { canOrganize } from "@/lib/organizer/access";
 
 type Result<T = object> = ({ ok: true } & T) | { ok: false; error: string; field?: string };
 const uuid = z.string().uuid();
@@ -42,8 +43,8 @@ const genSchema = z.object({
 export async function generateFixtures(tournamentId: string, input: unknown): Promise<Result<{ matches: number }>> {
   const p = genSchema.safeParse(input);
   if (!uuid.safeParse(tournamentId).success || !p.success) return { ok: false, error: p.success ? "Bad request." : p.error.issues[0].message };
-  const { user, t } = await ctx(tournamentId);
-  if (!user || !t || t.organizer_id !== user.id) return { ok: false, error: getErrorMessage("forbidden") };
+  const { supabase, user, t } = await ctx(tournamentId);
+  if (!user || !t || !(await canOrganize(supabase, tournamentId, user.id, t.organizer_id))) return { ok: false, error: getErrorMessage("forbidden") };
   const limit = await rateLimit(`fixtures:${user.id}`, { max: 6, windowSeconds: 60 });
   if (!limit.success) return { ok: false, error: getErrorMessage("rate_limited") };
   const v = p.data;
@@ -71,7 +72,7 @@ export async function updateMatch(tournamentId: string, matchId: string, input: 
   if (!uuid.safeParse(matchId).success || !p.success) return { ok: false, error: "Bad request." };
   const v = p.data;
   const { supabase, user, t } = await ctx(tournamentId);
-  if (!user || !t || t.organizer_id !== user.id) return { ok: false, error: getErrorMessage("forbidden") };
+  if (!user || !t || !(await canOrganize(supabase, tournamentId, user.id, t.organizer_id))) return { ok: false, error: getErrorMessage("forbidden") };
   const { data: m } = await supabase.from("matches").select("id, status, result_published_at, team_a_id, team_b_id").eq("id", matchId).eq("tournament_id", tournamentId).maybeSingle();
   if (!m) return { ok: false, error: getErrorMessage("not_found") };
   if ((v.status === "postponed" || v.status === "cancelled") && !v.reason) return { ok: false, error: "Give a reason for postponing or cancelling." };
@@ -94,7 +95,7 @@ export async function updateMatch(tournamentId: string, matchId: string, input: 
 
 export async function setFixturesPublished(tournamentId: string, matchIds: string[] | "all", published: boolean): Promise<Result> {
   const { supabase, user, t } = await ctx(tournamentId);
-  if (!user || !t || t.organizer_id !== user.id) return { ok: false, error: getErrorMessage("forbidden") };
+  if (!user || !t || !(await canOrganize(supabase, tournamentId, user.id, t.organizer_id))) return { ok: false, error: getErrorMessage("forbidden") };
   if (matchIds !== "all" && !z.array(uuid).max(300).safeParse(matchIds).success) return { ok: false, error: "Bad request." };
   let q = supabase.from("matches").update({ fixture_published: published }).eq("tournament_id", tournamentId);
   if (matchIds !== "all") q = q.in("id", matchIds);
@@ -151,7 +152,7 @@ export async function saveResult(tournamentId: string, input: unknown, expectedU
   if (!p.success) return { ok: false, error: p.error.issues[0].message, field: String(p.error.issues[0].path[0] ?? "") };
   const v = p.data;
   const { supabase, user, t } = await ctx(tournamentId);
-  if (!user || !t || t.organizer_id !== user.id) return { ok: false, error: getErrorMessage("forbidden") };
+  if (!user || !t || !(await canOrganize(supabase, tournamentId, user.id, t.organizer_id))) return { ok: false, error: getErrorMessage("forbidden") };
   const { data: m } = await supabase.from("matches").select("id, updated_at, team_a_id, team_b_id").eq("id", v.matchId).eq("tournament_id", tournamentId).maybeSingle();
   if (!m) return { ok: false, error: getErrorMessage("not_found") };
   if (!m.team_a_id || !m.team_b_id) return { ok: false, error: getErrorMessage("teams_not_set") };
