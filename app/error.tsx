@@ -22,7 +22,7 @@ export default function ErrorPage({
   }, [error, errorId]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center bg-surface text-ink font-body select-none">
+    <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center text-ink font-body select-none">
       {/* Line-drawn illustration: Referee's Whistle */}
       <svg
         className="w-44 h-44 mb-6 stroke-ink dark:stroke-white text-transparent"

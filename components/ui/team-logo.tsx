@@ -10,8 +10,8 @@ export interface TeamLogoProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const TEAM_PALETTES = [
-  { bg: "#1F7A4D", text: "#FFFFFF" }, // Turf
-  { bg: "#0F2A43", text: "#FFFFFF" }, // Ink
+  { bg: "#0A7F52", text: "#FFFFFF" }, // Emerald
+  { bg: "#0B3D2E", text: "#FFFFFF" }, // Forest
   { bg: "#C8553D", text: "#FFFFFF" }, // Clay
   { bg: "#D97706", text: "#FFFFFF" }, // Amber
   { bg: "#4338CA", text: "#FFFFFF" }, // Indigo

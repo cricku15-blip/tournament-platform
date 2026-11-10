@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Barlow_Condensed, Figtree } from "next/font/google";
+import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import { cookies } from "next/headers";
 import "./globals.css";
 
-const barlowCondensed = Barlow_Condensed({
+const outfit = Outfit({
   subsets: ["latin"],
-  weight: ["600", "700"],
+  weight: ["500", "600", "700", "800"],
   variable: "--font-display",
   display: "swap",
 });
 
-const figtree = Figtree({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-body",
   display: "swap",
 });
@@ -34,8 +34,8 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${barlowCondensed.variable} ${figtree.variable}`}
-      data-theme={theme === "dark" || theme === "light" ? theme : undefined}
+      className={`${outfit.variable} ${jakarta.variable}`}
+      data-theme={theme === "light" ? "light" : theme === "system" ? undefined : "dark"}
     >
       <body className="antialiased min-h-screen bg-surface text-ink font-body">
         {children}

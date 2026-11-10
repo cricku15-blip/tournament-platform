@@ -7,26 +7,8 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 bg-surface text-ink overflow-hidden select-none">
-      {/* Faint Pitch-Line Pattern SVG */}
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full stroke-ink/5 dark:stroke-white/5"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        aria-hidden="true"
-      >
-        <pattern
-          id="pitch-lines"
-          width="160"
-          height="160"
-          patternUnits="userSpaceOnUse"
-        >
-          <rect width="160" height="160" fill="none" strokeWidth="1" />
-          <circle cx="80" cy="80" r="40" strokeWidth="1" strokeDasharray="4 4" />
-          <line x1="0" y1="80" x2="160" y2="80" strokeWidth="1" />
-        </pattern>
-        <rect width="100%" height="100%" fill="url(#pitch-lines)" />
-      </svg>
+    <div className="relative flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 text-ink overflow-hidden select-none">
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-120px] h-[380px] w-[760px] -translate-x-1/2 rounded-full bg-primary/15 blur-[100px]" />
 
       <div className="relative z-10 mb-8 text-center">
         <Link
@@ -37,7 +19,7 @@ export default function AuthLayout({
         </Link>
       </div>
 
-      <div className="relative z-10 w-full max-w-md rounded-card border border-line bg-card p-6 sm:p-8 shadow-sm">
+      <div className="relative z-10 w-full max-w-md rounded-card border border-line bg-card/90 p-6 backdrop-blur-md sm:p-8">
         {children}
       </div>
 

@@ -7,6 +7,7 @@ import { RoleSwitcher } from "./role-switcher";
 import { GlobalSearch } from "./global-search";
 import { NotificationsBell } from "./notifications-bell";
 import { UserMenu } from "./user-menu";
+import { ThemeToggle } from "./theme-toggle";
 import type { UserRole, UserRoles } from "@/lib/session";
 
 export interface AppHeaderProps {
@@ -53,6 +54,8 @@ export function AppHeader({ currentRole, roles, user, cities }: AppHeaderProps) 
       <div className="flex items-center gap-3">
         {/* Global Search */}
         <GlobalSearch />
+
+        <ThemeToggle />
 
         {/* Notifications Bell */}
         <NotificationsBell userId={user.id} />
