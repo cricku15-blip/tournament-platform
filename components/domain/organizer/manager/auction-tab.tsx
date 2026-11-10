@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { changeStatus } from "@/app/(app)/organizer/actions";
 import { recordSimpleSale, scheduleAuction, startAuction } from "@/app/(app)/organizer/tournaments/[id]/auction/actions";
+import { isoToLocal } from "@/lib/organizer/datetime";
 import { cn } from "@/lib/utils";
 
 export interface Check { label: string; ok: boolean; hint?: string }
@@ -22,7 +23,7 @@ export function AuctionTab({
   canLock: boolean; sold: SoldRow[]; lots: SimpleLot[]; teams: Array<{ id: string; name: string }>;
 }) {
   const router = useRouter();
-  const [when, setWhen] = React.useState(scheduledAt);
+  const [when, setWhen] = React.useState(isoToLocal(scheduledAt));
   const [busy, setBusy] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [startOpen, setStartOpen] = React.useState(false);

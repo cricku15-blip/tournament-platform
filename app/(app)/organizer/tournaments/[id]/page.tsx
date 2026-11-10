@@ -399,8 +399,5 @@ async function AuctionSection({ t }: { t: TournamentRow }) {
   ];
   const sold: SoldRow[] = (lots.data ?? []).map((l) => ({ player: names.get(l.player_id) ?? "Player", category: poolRows.find((p) => p.user_id === l.player_id)?.category ?? null, team: approved.find((x) => x.id === l.sold_team_id)?.name ?? null, price: l.sold_price, status: l.status }));
   const simple: SimpleLot[] = poolRows.filter((p) => p.lot_status === "upcoming" || p.lot_status === "unsold").map((p) => ({ id: p.user_id, name: names.get(p.user_id) ?? "Player", base: p.base_price, category: p.category }));
-  const local = s?.scheduled_at ? new Date(s.scheduled_at) : null;
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const scheduled = local ? `${local.getFullYear()}-${pad(local.getMonth() + 1)}-${pad(local.getDate())}T${pad(local.getHours())}:${pad(local.getMinutes())}` : "";
-  return <AuctionTab tournamentId={t.id} mode={s?.mode === "simple" ? "simple" : "live"} status={s?.status ?? "not_scheduled"} poolLocked={Boolean(s?.pool_locked)} scheduledAt={scheduled} checks={checks} canLock={t.status === "registration_closed"} sold={sold} lots={simple} teams={approved.map((x) => ({ id: x.id, name: x.name }))} />;
+  return <AuctionTab tournamentId={t.id} mode={s?.mode === "simple" ? "simple" : "live"} status={s?.status ?? "not_scheduled"} poolLocked={Boolean(s?.pool_locked)} scheduledAt={s?.scheduled_at ?? ""} checks={checks} canLock={t.status === "registration_closed"} sold={sold} lots={simple} teams={approved.map((x) => ({ id: x.id, name: x.name }))} />;
 }

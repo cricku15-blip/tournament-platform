@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { EmptyState } from "@/components/ui/empty-state";
-import { Button } from "@/components/ui/button";
+import { ChatGate } from "@/components/domain/chat/chat-gate";
 import { loadTournament } from "@/lib/public/page-helpers";
-import { getAnnouncements } from "@/lib/public/queries";
+import { getAnnouncements, getSiteSetting, getTournamentTeams } from "@/lib/public/queries";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -14,8 +12,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ChatPage({ params }: Props) {
   const t = await loadTournament((await params).slug, "/chat");
-  const pinned = (await getAnnouncements(t.id)).find((a) => a.is_pinned);
-  // The member chat component is added in Plan 9; everyone else sees this.
+  const [announcements, teams, flags] = await Promise.all([getAnnouncements(t.id), getTournamentTeams(t.id), getSiteSetting("flags")]);
+  const pinned = announcements.find((a) => a.is_pinned);
+  const chatEnabled = (flags as { chat?: boolean } | null)?.chat !== false;
   return (
     <div className="flex max-w-2xl flex-col gap-4">
       {pinned && (
@@ -24,14 +23,13 @@ export default async function ChatPage({ params }: Props) {
           <p className="mt-1 whitespace-pre-line text-sm text-muted">{pinned.body}</p>
         </article>
       )}
-      <EmptyState
-        title="Join this tournament to chat"
-        description="Chat is open to players and managers in this tournament."
-        action={
-          <Button asChild variant="secondary">
-            <Link href={`/login?next=${encodeURIComponent(`/tournaments/${t.slug}/chat`)}`}>Log in</Link>
-          </Button>
-        }
+      <ChatGate
+        tournamentId={t.id}
+        slug={t.slug}
+        organizerId={String((t as { organizer_id?: string }).organizer_id ?? "")}
+        managerIds={teams.map((x) => (x as { manager_id?: string }).manager_id).filter((x): x is string => !!x)}
+        endDate={t.end_date}
+        chatEnabled={chatEnabled}
       />
     </div>
   );
