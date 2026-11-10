@@ -95,16 +95,18 @@ export async function middleware(request: NextRequest) {
   // Fetch profile if user is logged in
   let isAdmin = false;
   let isOnboarded = false;
+  let isRestricted = false;
 
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("is_admin, onboarded_at")
+      .select("is_admin, onboarded_at, status")
       .eq("id", user.id)
       .maybeSingle();
 
     isAdmin = Boolean(profile?.is_admin);
     isOnboarded = Boolean(profile?.onboarded_at);
+    isRestricted = Boolean(profile && profile.status !== "active");
   }
 
   // 1. Maintenance mode check
@@ -149,6 +151,12 @@ export async function middleware(request: NextRequest) {
     return copyCookiesAndHeaders(supabaseResponse, res);
   }
 
+  // 2b. Suspended or banned users are blocked from the app (public pages stay open).
+  if (user && isRestricted && !isAdmin && (isAppRoute || isAdminRoute || pathname === "/onboarding")) {
+    const res = NextResponse.redirect(new URL("/suspended", request.url));
+    return copyCookiesAndHeaders(supabaseResponse, res);
+  }
+
   // 3. Logged-in users visiting /login or /signup -> redirect away
   if (user && isAuthEntryRoute) {
     const nextParam = request.nextUrl.searchParams.get("next");
@@ -164,6 +172,7 @@ export async function middleware(request: NextRequest) {
       pathname.startsWith("/auth") ||
       pathname.startsWith("/api") ||
       pathname === "/logout" ||
+      pathname === "/suspended" ||
       pathname === "/maintenance";
 
     if (!isOnboarded && !isSpecialRoute && pathname !== "/onboarding") {
@@ -179,7 +188,8 @@ export async function middleware(request: NextRequest) {
 
   // 5. Admin protection: block /admin unless profiles.is_admin
   if (isAdminRoute && !isAdmin) {
-    const res = NextResponse.redirect(new URL("/dashboard", request.url));
+    // Non-admins get a plain 404, not a hint that the area exists.
+    const res = NextResponse.rewrite(new URL("/__not-found", request.url), { status: 404 });
     return copyCookiesAndHeaders(supabaseResponse, res);
   }
 
