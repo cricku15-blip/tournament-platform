@@ -5,9 +5,9 @@ import { isServiceCall, json } from "../_shared/clients.ts";
 serve(async (req) => {
   if (!isServiceCall(req)) return json({ error: "forbidden" }, 403);
   const { to, subject, title, body, cta_label, cta_url } = await req.json();
-  const html = `<div style="font-family:system-ui,sans-serif;max-width:520px;margin:auto;color:#0F2A43">
+  const html = `<div style="font-family:system-ui,sans-serif;max-width:520px;margin:auto;color:#10291E">
     <h2>${title ?? subject}</h2><p style="line-height:1.55">${body ?? ""}</p>
-    ${cta_url ? `<p><a href="${cta_url}" style="background:#1F7A4D;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">${cta_label ?? "Open"}</a></p>` : ""}
+    ${cta_url ? `<p><a href="${cta_url}" style="background:#0A7F52;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">${cta_label ?? "Open"}</a></p>` : ""}
   </div>`;
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",

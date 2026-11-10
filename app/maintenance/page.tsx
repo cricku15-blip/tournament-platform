@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export default function MaintenancePage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center bg-surface text-ink font-body select-none">
+    <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center text-ink font-body select-none">
       {/* Line-drawn illustration: Pitch Roller / Ground Care */}
       <svg
         className="w-48 h-48 mb-6 stroke-ink dark:stroke-white text-transparent"

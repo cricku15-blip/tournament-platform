@@ -21,7 +21,7 @@ function launch(options: Record<string, unknown>): Promise<CheckoutResult> {
     };
     const rz = new Ctor({
       ...options,
-      theme: { color: "#1F7A4D" },
+      theme: { color: "#0FA36B" },
       // Success only means "go and check the server". The webhook is the only thing that marks anything paid.
       handler: () => done("success"),
       modal: { ondismiss: () => done("dismissed") },

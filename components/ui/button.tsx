@@ -29,12 +29,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles = {
       primary:
-        "bg-primary text-primary-ink hover:brightness-95 active:brightness-90 shadow-xs",
+        "bg-gradient-to-br from-primary-hi to-primary text-primary-ink font-semibold shadow-[var(--glow)] hover:brightness-110 hover:-translate-y-px active:translate-y-0 active:brightness-95",
       secondary:
-        "border-[1.5px] border-ink text-ink bg-transparent hover:bg-surface/70 active:bg-surface",
+        "border border-line bg-card/70 text-ink backdrop-blur-sm hover:border-primary/60 hover:text-primary active:bg-surface",
       destructive:
-        "bg-danger text-white hover:brightness-95 active:brightness-90 shadow-xs",
-      ghost: "text-ink hover:bg-surface/70 active:bg-surface bg-transparent",
+        "bg-danger text-white font-semibold hover:brightness-110 active:brightness-95",
+      ghost: "text-ink hover:bg-primary/10 hover:text-primary active:bg-primary/15 bg-transparent",
     };
 
     const sizeStyles = {

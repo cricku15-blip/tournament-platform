@@ -14,6 +14,6 @@ export default async function Image({ params }: { params: Promise<{ slug: string
     eyebrow: `${t.sport_name} · ${t.city_name}`,
     title: t.name,
     subtitle: t.start_date ? `Starts ${formatDate(t.start_date)}` : undefined,
-    accent: t.sport_slug === "football" ? "#C8553D" : "#1F7A4D",
+    accent: t.sport_slug === "football" ? "#FF8A5C" : "#22F08A",
   });
 }

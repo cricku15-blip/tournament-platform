@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CitySelector } from "./city-selector";
+import { ThemeToggle } from "./theme-toggle";
 import {
   Sheet,
   SheetContent,
@@ -57,6 +58,8 @@ export function PublicHeader({ cities }: { cities?: Array<{ id: string; name: st
         <div className="sm:hidden">
           <CitySelector isLoggedIn={false} cities={cities?.map((c) => ({ ...c, state: c.state ?? undefined }))} />
         </div>
+
+        <ThemeToggle />
 
         {/* Desktop auth buttons */}
         <div className="hidden sm:flex items-center gap-3">

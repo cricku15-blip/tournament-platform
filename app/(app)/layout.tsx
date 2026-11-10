@@ -47,7 +47,7 @@ export default async function AppLayout({
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-surface text-ink font-body">
+    <div className="flex min-h-screen flex-col text-ink font-body">
       <AppHeader
         currentRole={currentRole}
         roles={roles}

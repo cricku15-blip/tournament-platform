@@ -27,12 +27,12 @@ export function CountUpCard() {
   }, []);
   const v = reduced ? target : n;
   return (
-    <div className="rounded-card border border-line bg-card p-6 shadow-sm" aria-label="Example scoreboard">
+    <div className="rounded-card border border-line bg-card/90 p-7 backdrop-blur-md" aria-label="Example scoreboard">
       <p className="text-xs font-semibold uppercase tracking-wide text-muted">Example match</p>
       <div className="mt-3 flex items-end justify-between">
         <div>
           <p className="font-display text-xl font-bold">Raipur Strikers</p>
-          <p className="font-display text-6xl font-bold tabular-nums text-ink">{v.runs}/{v.wkts}</p>
+          <p className="font-display text-6xl font-extrabold tabular-nums text-primary sm:text-7xl">{v.runs}/{v.wkts}</p>
           <p className="text-sm text-muted">15.2 overs</p>
         </div>
         <div className="text-right">

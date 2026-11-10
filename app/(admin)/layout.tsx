@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { WorkspaceSidebar } from "@/components/layout/workspace-sidebar";
 import { UserMenu } from "@/components/layout/user-menu";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import {
   getSessionUser,
   getProfile,
@@ -32,7 +33,7 @@ export default async function AdminLayout({
   };
 
   return (
-    <div className="flex min-h-screen bg-surface text-ink font-body">
+    <div className="flex min-h-screen text-ink font-body">
       <WorkspaceSidebar role="admin" />
       <div className="flex flex-1 flex-col">
         {/* Admin Top Header */}
@@ -56,6 +57,7 @@ export default async function AdminLayout({
             >
               Back to App
             </Link>
+            <ThemeToggle />
             <UserMenu user={userSummary} />
           </div>
         </header>

@@ -52,7 +52,7 @@ Supabase connection and Realtime limits depend on your plan and change over time
 1. **Server Components by default;** client components only for interactivity. Public pages use ISR with tag-based revalidation (`revalidateTag('tournament:<id>')` after publish, result, or registration changes).
 2. **Never put per-user data in a cached page.** Fetch personalised bits (my role, my subscription, bid button state) on the client or in a separate dynamic segment.
 3. **Bundle budget:** the landing page ships under 150 KB of JavaScript (gzipped); the app shell under 250 KB. Dynamic-import heavy parts (auction room, console, charts, rich text editor, Razorpay script, date pickers).
-4. **Fonts:** `next/font`, only the weights used (Barlow Condensed 600/700, Figtree 400/500/600), `display: swap`.
+4. **Fonts:** `next/font`, only the weights used (Outfit 500/600/700/800 for display, Plus Jakarta Sans 400/500/600/700 for body), `display: swap`. (Changed by the owner on 2026-11-10 with the theme redesign.)
 5. **Images:** `next/image` with explicit sizes; resize in the browser before upload (max 1600 px wide, WebP at 0.85) so storage and bandwidth stay small; show a generated placeholder when missing.
 6. **Lists over 100 rows are virtualised** (pool, applications, chat history). Tables become stacked cards on mobile.
 7. **Stream with Suspense** so the header and layout paint before data arrives; skeletons match final layout to avoid layout shift.
@@ -83,7 +83,7 @@ Supabase connection and Realtime limits depend on your plan and change over time
 4. All user-visible text lives in the message catalogue (`next-intl`), even if English only at launch.
 5. Money is integers in paise everywhere; format with one helper (`formatINR`, Indian digit grouping). Dates use one helper and show India time unless the user changes it.
 6. Accessibility is part of "done": labels, focus order, contrast, 44 px targets, reduced motion, `aria-live` for the auction.
-7. Components follow the design system in spec section 5 exactly (colors, type, radii). Amber is for **live** states only.
+7. Components follow the design tokens in `app/globals.css` (owner-approved redesign of 2026-11-10: **Night** = black + neon green, **Day** = warm cream + emerald; supersedes the colors, type and radii in spec section 5). Amber is for **live** states only.
 
 ## 8. Testing rules (what "done" means)
 

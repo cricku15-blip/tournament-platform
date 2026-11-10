@@ -1,42 +1,65 @@
 @import "tailwindcss";
 
+/* ============================================================
+   GroundWar themes
+   Day   = warm cream, deep emerald, soft mint and peach light.
+   Night = true black with neon green, glow and a faint pitch grid.
+   Amber (--floodlight) is reserved for LIVE states only.
+   ============================================================ */
+
 :root {
   --color-scheme: light;
   color-scheme: light;
 
-  /* Color tokens - Light */
-  --ink: #0F2A43;
-  --surface: #F5F7F9;
+  /* Day */
+  --ink: #10291E;
+  --surface: #F8F5EE;
   --card: #FFFFFF;
-  --line: #DCE3EA;
-  --primary: #1F7A4D;
+  --line: #E6E0D3;
+  --primary: #0A7F52;
+  --primary-hi: #0FA36B;
   --primary-ink: #FFFFFF;
-  --floodlight: #FFB300;
-  --clay: #C8553D;
+  --floodlight: #F5A400;
+  --clay: #E4572E;
   --danger: #D92D20;
-  --muted: #5F7389;
+  --muted: #5B6A60;
 
-  /* Font fallbacks if next/font is not loaded yet */
-  --font-display: "Barlow Condensed", sans-serif;
-  --font-body: "Figtree", sans-serif;
+  --shadow-card: 0 1px 2px rgba(16, 41, 30, 0.05), 0 14px 34px -14px rgba(16, 41, 30, 0.16);
+  --shadow-pop: 0 18px 50px -16px rgba(16, 41, 30, 0.28);
+  --glow: 0 10px 26px -8px rgba(10, 127, 82, 0.55);
+  --bg-art:
+    radial-gradient(900px 520px at 8% -8%, rgba(125, 224, 178, 0.45), transparent 62%),
+    radial-gradient(820px 520px at 100% 0%, rgba(255, 198, 160, 0.5), transparent 58%),
+    radial-gradient(700px 500px at 50% 110%, rgba(190, 230, 255, 0.35), transparent 60%);
+
+  --font-display: "Outfit", sans-serif;
+  --font-body: "Plus Jakarta Sans", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --color-scheme: dark;
     color-scheme: dark;
-
-    /* Color tokens - Dark */
-    --ink: #E8EEF4;
-    --surface: #0B1A2A;
-    --card: #122438;
-    --line: #24384D;
-    --primary: #3BB679;
-    --primary-ink: #08210F;
+    --ink: #E8F6EE;
+    --surface: #040705;
+    --card: #0A110D;
+    --line: #17291E;
+    --primary: #22F08A;
+    --primary-hi: #5BFFAE;
+    --primary-ink: #03130A;
     --floodlight: #FFC233;
-    --clay: #E3735A;
-    --danger: #F2554A;
-    --muted: #93A7BB;
+    --clay: #FF8A5C;
+    --danger: #FF5A4D;
+    --muted: #86A292;
+    --shadow-card: 0 0 0 1px rgba(34, 240, 138, 0.05), 0 22px 44px -22px rgba(0, 0, 0, 0.9);
+    --shadow-pop: 0 0 40px -10px rgba(34, 240, 138, 0.35), 0 24px 60px -20px rgba(0, 0, 0, 0.9);
+    --glow: 0 0 28px -4px rgba(34, 240, 138, 0.6);
+    --bg-art:
+      radial-gradient(900px 480px at 50% -12%, rgba(34, 240, 138, 0.2), transparent 62%),
+      radial-gradient(600px 400px at 100% 100%, rgba(34, 240, 138, 0.08), transparent 60%),
+      linear-gradient(rgba(34, 240, 138, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 240, 138, 0.045) 1px, transparent 1px);
+    --bg-size: auto, auto, 52px 52px, 52px 52px;
   }
 }
 
@@ -44,35 +67,50 @@
 .dark {
   --color-scheme: dark;
   color-scheme: dark;
-
-  /* Color tokens - Dark */
-  --ink: #E8EEF4;
-  --surface: #0B1A2A;
-  --card: #122438;
-  --line: #24384D;
-  --primary: #3BB679;
-  --primary-ink: #08210F;
+  --ink: #E8F6EE;
+  --surface: #040705;
+  --card: #0A110D;
+  --line: #17291E;
+  --primary: #22F08A;
+  --primary-hi: #5BFFAE;
+  --primary-ink: #03130A;
   --floodlight: #FFC233;
-  --clay: #E3735A;
-  --danger: #F2554A;
-  --muted: #93A7BB;
+  --clay: #FF8A5C;
+  --danger: #FF5A4D;
+  --muted: #86A292;
+  --shadow-card: 0 0 0 1px rgba(34, 240, 138, 0.05), 0 22px 44px -22px rgba(0, 0, 0, 0.9);
+  --shadow-pop: 0 0 40px -10px rgba(34, 240, 138, 0.35), 0 24px 60px -20px rgba(0, 0, 0, 0.9);
+  --glow: 0 0 28px -4px rgba(34, 240, 138, 0.6);
+  --bg-art:
+    radial-gradient(900px 480px at 50% -12%, rgba(34, 240, 138, 0.2), transparent 62%),
+    radial-gradient(600px 400px at 100% 100%, rgba(34, 240, 138, 0.08), transparent 60%),
+    linear-gradient(rgba(34, 240, 138, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 240, 138, 0.045) 1px, transparent 1px);
+  --bg-size: auto, auto, 52px 52px, 52px 52px;
 }
 
 :root[data-theme="light"] {
   --color-scheme: light;
   color-scheme: light;
-
-  /* Color tokens - Light */
-  --ink: #0F2A43;
-  --surface: #F5F7F9;
+  --ink: #10291E;
+  --surface: #F8F5EE;
   --card: #FFFFFF;
-  --line: #DCE3EA;
-  --primary: #1F7A4D;
+  --line: #E6E0D3;
+  --primary: #0A7F52;
+  --primary-hi: #0FA36B;
   --primary-ink: #FFFFFF;
-  --floodlight: #FFB300;
-  --clay: #C8553D;
+  --floodlight: #F5A400;
+  --clay: #E4572E;
   --danger: #D92D20;
-  --muted: #5F7389;
+  --muted: #5B6A60;
+  --shadow-card: 0 1px 2px rgba(16, 41, 30, 0.05), 0 14px 34px -14px rgba(16, 41, 30, 0.16);
+  --shadow-pop: 0 18px 50px -16px rgba(16, 41, 30, 0.28);
+  --glow: 0 10px 26px -8px rgba(10, 127, 82, 0.55);
+  --bg-art:
+    radial-gradient(900px 520px at 8% -8%, rgba(125, 224, 178, 0.45), transparent 62%),
+    radial-gradient(820px 520px at 100% 0%, rgba(255, 198, 160, 0.5), transparent 58%),
+    radial-gradient(700px 500px at 50% 110%, rgba(190, 230, 255, 0.35), transparent 60%);
+  --bg-size: auto, auto, auto;
 }
 
 @theme inline {
@@ -81,15 +119,16 @@
   --color-card: var(--card);
   --color-line: var(--line);
   --color-primary: var(--primary);
+  --color-primary-hi: var(--primary-hi);
   --color-primary-ink: var(--primary-ink);
   --color-floodlight: var(--floodlight);
   --color-clay: var(--clay);
   --color-danger: var(--danger);
   --color-muted: var(--muted);
 
-  --radius-input: 8px;
-  --radius-btn: 8px;
-  --radius-card: 14px;
+  --radius-input: 12px;
+  --radius-btn: 12px;
+  --radius-card: 20px;
   --radius-badge: 999px;
   --radius-pill: 999px;
 
@@ -99,12 +138,38 @@
 
 body {
   background-color: var(--surface);
+  background-image: var(--bg-art);
+  background-size: var(--bg-size, auto);
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-body);
   margin: 0;
   padding: 0;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .font-display { letter-spacing: -0.015em; }
+
+/* Every card gets the theme's soft shadow (day) or glow edge (night). */
+.rounded-card { box-shadow: var(--shadow-card); }
+.rounded-card:is(a, button, [role="link"]):hover,
+a.rounded-card:hover { box-shadow: var(--shadow-pop); }
+
+/* Glass bars (headers, sticky save bars, filter bars) */
+header.sticky, .backdrop-blur-xs { -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+header.sticky { background-color: color-mix(in srgb, var(--card) 72%, transparent) !important; border-bottom-color: color-mix(in srgb, var(--line) 80%, transparent); }
+
+/* Reusable accents */
+.text-gradient {
+  background: linear-gradient(100deg, var(--ink) 0%, var(--primary) 60%, var(--primary-hi) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.glow-primary { box-shadow: var(--glow); }
+.pitch-lines {
+  background-image: repeating-linear-gradient(90deg, color-mix(in srgb, var(--primary) 5%, transparent) 0 1px, transparent 1px 72px);
 }
 
 /* Global focus ring: 2 px Turf with 2 px offset */

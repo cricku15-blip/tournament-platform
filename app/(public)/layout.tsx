@@ -11,7 +11,7 @@ export default async function PublicLayout({
 }) {
   const cities = await getCities().catch(() => undefined);
   return (
-    <div className="flex min-h-screen flex-col bg-surface text-ink font-body">
+    <div className="flex min-h-screen flex-col text-ink font-body">
       <PublicHeader cities={cities} />
       <LiveStripLoader />
       <main className="flex-1">{children}</main>
