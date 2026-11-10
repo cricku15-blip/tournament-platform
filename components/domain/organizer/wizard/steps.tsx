@@ -351,7 +351,7 @@ export function SquadStep(p: StepProps) {
           </button>
         ))}
       </div>
-      {locks.squadMode && <p className="text-sm text-muted">Squad mode can't be changed after payment.</p>}
+      {locks.squadMode && <p className="text-sm text-muted">Squad mode can&apos;t be changed after payment.</p>}
       <div className="grid gap-4 sm:grid-cols-3">
         <FormField id="s-min" label="Minimum squad size" required error={errors.squadMin}>
           <NumField id="s-min" value={d.squadMin} min={1} max={25} onChange={(v) => patch({ squadMin: v })} error={Boolean(errors.squadMin)} />
@@ -420,7 +420,7 @@ export function SquadStep(p: StepProps) {
                 </li>
               ))}
             </ul>
-            <p className="mt-1 text-xs text-muted">Columns: from, up to, step. Leave the last "up to" empty.</p>
+            <p className="mt-1 text-xs text-muted">Columns: from, up to, step. Leave the last &quot;up to&quot; empty.</p>
             <Button type="button" variant="secondary" size="sm" className="mt-2" onClick={() => { const last = a.incrementSlabs[a.incrementSlabs.length - 1]; setA({ incrementSlabs: [...a.incrementSlabs.slice(0, -1), { ...last, to: (last?.from ?? 0) + 100 }, { from: (last?.from ?? 0) + 100, to: null, step: (last?.step ?? 5) * 2 }] }); }}>
               <Plus className="h-4 w-4" aria-hidden /> Add slab
             </Button>
