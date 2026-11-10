@@ -8,6 +8,7 @@ _none yet_
 |---|---|---|---|---|
 | 1 Supabase backend | Claude | plan-1-supabase-backend | DB done, rest in progress | Migrations 0001-0015 applied to Supabase project `rljkmcncpsqigwmdbykb`. `types/supabase.ts` generated. Edge Functions written, NOT deployed (need Razorpay + Resend keys). pg_cron not yet enabled. |
 | 2 Web foundation | Antigravity | plan-2-web-foundation | Complete | Tasks 2.1-2.7 complete. All unit tests (31/31), lint, typecheck, and Next.js build pass. Landing bundle 128.56 KB (budget: < 150 KB). Zero server secrets in client bundle. Ready for Plans 3 & 4. |
+| 3 Auth/onboarding/account | Claude (took over from Antigravity) | plan-3-auth-onboarding-account | Complete (e2e needs real login to finish) | Pages C1-C5, D1, D2, D3, D5 + realtime bell. See below. |
 
 ## Plan 2 Handoff Details
 - **Branch:** `plan-2-web-foundation`
@@ -27,3 +28,22 @@ _none yet_
 - **Open questions:**
   - Hindi language catalogue support (spec 28 open decision; `next-intl` is structured so adding `messages/hi.json` and locale switcher is straightforward).
   - External analytics and error tracking provider selection (Sentry/PostHog/custom).
+
+
+## Owner decisions on spec section 28 (2026-11-10)
+1. Language: English only. 2. No phone OTP/verification at all; phone optional and unverified. 3. Age: min 13, under 18 sees parental-consent note. 4. Subscription grace: 3 days. 5. Direct squad adds must match tournament city. 6. Team roster at application: not required. 7. Chat: new users cannot post links; chat closes 7 days after tournament ends. 11. Tax/GST: basic placeholder version for now. 13. One unsold round; unsold players can be added directly later. 14. Organizer public contact default OFF. 15. Only admin activates new cities.
+**Owner wants these in v1 now (not later):** 8 assistant manager role, 9 tournament ownership transfer, 10 admin read-only impersonation, 12 group stage + knockout and football playoff styles. These need schema work (new migrations) and are NOT in plans 1-10 yet; schedule them as an extra plan after Plan 9.
+
+## Plan 3 Handoff Details
+- **Branch:** `plan-3-auth-onboarding-account` (by Claude; Antigravity's empty branch of the same name was deleted).
+- **Done:** C1 /login, C2 /signup (Google + email link + 6-digit code, `?next=` safe-redirect), C3 /auth/check-email (6-box code, paste, 60s resend), C4 /auth/callback, C5 /onboarding (city + detect location via `lib/cities.ts` coords + "city not listed" -> `city_requests`; about you; intent + sport profiles; state survives refresh), D1 /dashboard (role-aware, Suspense per section), D2 /profile (preview, unsaved bar, `change_city` RPC), D3 /settings (notification prefs, theme, export JSON, delete account, logout all), D5 /notifications (Today/Earlier, All/Unread, keyset 30/page, mark all read) and realtime bell (INSERT subscription filtered by user_id).
+- **Changed shared files:** `lib/rpc.ts` no longer imports the server client (it broke the build when used from a client component); server callers now pass their client. `components/layout/notifications-bell.tsx` now self-loads when given `userId`. App layout shows the real city name.
+- **Rate limits:** email send per IP and per address, code verify per IP, username check, city request, data export.
+- **Skipped / notes:**
+  - Google login needs the Google provider configured in Supabase (MY-TASKS C2). Email link/code works first.
+  - Email code relies on the Supabase "Confirm/Magic link" email template including `{{ .Token }}`; add it in Supabase > Auth > Email templates, otherwise only the link works.
+  - Profile guard trigger silently reverts `is_admin` / `status` edits instead of raising an error (the database still refuses the change).
+  - Delete account: organizer_id on `tournaments` has no ON DELETE rule, so users with any past tournament get "contact support". Needs a decision/migration (anonymise organizer) later.
+  - Playwright auth tests are written (`e2e/auth.spec.ts`); full sign-up-to-dashboard e2e needs a test user/inbox (not available). Lighthouse 95+ not measured yet.
+  - Invite code box routes to `/join/<code>`, which Plan 7 builds. Dashboard links to `/subscription`, `/tournaments`, `/player/applications`, `/organizer/*` pages that later plans build.
+- **Env vars:** none new.
