@@ -38,6 +38,8 @@ export function AuthForm({ mode, next }: { mode: "login" | "signup"; next: strin
     );
   }
 
+  const showGoogle = process.env.NEXT_PUBLIC_GOOGLE_AUTH === "true";
+
   async function onGoogle() {
     setError(undefined);
     setGooglePending(true);
@@ -62,13 +64,17 @@ export function AuthForm({ mode, next }: { mode: "login" | "signup"; next: strin
       </p>
 
       <div className="mt-6 flex flex-col gap-4">
-        <Button type="button" variant="secondary" size="lg" onClick={onGoogle} loading={googlePending}>
-          Continue with Google
-        </Button>
+        {showGoogle ? (
+          <>
+            <Button type="button" variant="secondary" size="lg" onClick={onGoogle} loading={googlePending}>
+              Continue with Google
+            </Button>
 
-        <div className="flex items-center gap-3 text-xs text-muted" role="separator">
-          <span className="h-px flex-1 bg-line" /> or <span className="h-px flex-1 bg-line" />
-        </div>
+            <div className="flex items-center gap-3 text-xs text-muted" role="separator">
+              <span className="h-px flex-1 bg-line" /> or <span className="h-px flex-1 bg-line" />
+            </div>
+          </>
+        ) : null}
 
         <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
           <FormField id="email" label="Email address" error={error}>
