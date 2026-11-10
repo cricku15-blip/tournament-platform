@@ -12,9 +12,9 @@ describe("countMatches", () => {
     expect(countMatches({ format: "knockout", teams: 8, legs: 1, thirdPlace: true }).total).toBe(8);
   });
   it("league then playoffs", () => {
-    expect(countMatches({ format: "league_playoffs", teams: 6, legs: 1, playoffStyle: "top4" }).total).toBe(18);
-    expect(countMatches({ format: "league_playoffs", teams: 6, legs: 1, playoffStyle: "top2" }).total).toBe(16);
-    expect(countMatches({ format: "league_playoffs", teams: 6, legs: 1, playoffStyle: "qualifier" }).total).toBe(19);
+    expect(countMatches({ format: "league_playoffs", teams: 6, legs: 1, playoffStyle: "top4_semis" }).total).toBe(18);
+    expect(countMatches({ format: "league_playoffs", teams: 6, legs: 1, playoffStyle: "top2_final" }).total).toBe(16);
+    expect(countMatches({ format: "league_playoffs", teams: 6, legs: 1, playoffStyle: "qualifier_style" }).total).toBe(19);
   });
 });
 

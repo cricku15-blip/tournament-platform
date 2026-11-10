@@ -36,7 +36,7 @@ export interface DraftState {
   format: "league" | "knockout" | "league_playoffs";
   teamCount: number;
   leagueLegs: 1 | 2;
-  playoffStyle: "top2" | "top4" | "qualifier" | null;
+  playoffStyle: "top2_final" | "top4_semis" | "qualifier_style" | null;
   thirdPlaceMatch: boolean;
   seedingMethod: "random" | "manual";
   rules: Record<string, unknown>;
