@@ -1,5 +1,5 @@
 import * as React from "react";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { WorkspaceSidebar } from "@/components/layout/workspace-sidebar";
 import { UserMenu } from "@/components/layout/user-menu";
@@ -20,7 +20,7 @@ export default async function AdminLayout({
 
   const profile = await getProfile();
   if (!profile?.is_admin) {
-    redirect("/dashboard");
+    notFound();
   }
 
   const userSummary = {
