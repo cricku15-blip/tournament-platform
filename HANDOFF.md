@@ -10,6 +10,7 @@ _none yet_
 | 2 Web foundation | Antigravity | plan-2-web-foundation | Complete | Tasks 2.1-2.7 complete. All unit tests (31/31), lint, typecheck, and Next.js build pass. Landing bundle 128.56 KB (budget: < 150 KB). Zero server secrets in client bundle. Ready for Plans 3 & 4. |
 | 3 Auth/onboarding/account | Claude (took over from Antigravity) | plan-3-auth-onboarding-account | Complete (e2e needs real login to finish) | Pages C1-C5, D1, D2, D3, D5 + realtime bell. See below. |
 | 4 Public site | Claude | plan-4-public-site | Complete (needs seed data to eyeball tournament pages) | A1-A10, B1-B4, B6 + SEO. See below. |
+| 5 Organizer workspace | Claude | plan-5-organizer-workspace | Complete | H1-H4 with 12 tabs. See below. |
 
 ## Plan 2 Handoff Details
 - **Branch:** `plan-2-web-foundation`
@@ -63,3 +64,11 @@ _none yet_
   - Tables and leaderboards only show data for published tournaments; DB currently has no tournaments, so tournament, team and match pages were only verified for 404 behaviour and compile, not visually.
   - Not measured: Lighthouse scores, 200-tournament seed timing, WhatsApp card preview, Playwright browse flow (tests skipped on owner's instruction).
 - **Env vars:** `NEXT_PUBLIC_APP_URL` should be set in production (used for canonical, sitemap, OG, JSON-LD).
+
+
+## Plan 5 Handoff Details
+- **Branch:** `plan-5-organizer-workspace`.
+- **Done:** H1 overview, H2 list (tabs, keyset, duplicate, share, delete draft), H3 7-step wizard (autosave 10 s, slug check with suggestions, tier + fee from `pricing_tiers`, live total-matches, sport-driven rules, auction settings with slab editor, resume via `?draft=<id>`), H4 manager with status stepper and 12 `?tab=` tabs (Overview next-step card + activity, Setup using the wizard in setup mode with locks after payment, Teams, Applications with filters/drawer/bulk approve in chunks of 10, Player pool or direct squads, Announcements, Plan and payment, Settings with cancel/delete, placeholders for Auction/Fixtures/Results/Chat). Ownership enforced by `requireOwnedTournament` (404 for others); RLS is the real guard. `loading.tsx` and `error.tsx` added.
+- **Needs later plans:** `/organizer/tournaments/[id]/checkout` (Plan 6), `/join/<code>` invite acceptance (Plan 7), Upgrade plan button (Plan 6), auction console (Plan 9), fixtures and results (Plan 8).
+- **Notes:** rules text and descriptions are plain text (no rich text editor yet). Date-times are converted to ISO in the browser. `checkSlug` uses the service role only to answer "taken or not". Team remove is allowed only until registration closes. Changing dates does not auto-announce; the Setup tab tells the organizer to post an announcement (the plan's auto-notify needs a small RPC; request it as a backend change if wanted).
+- **Not verified:** nothing run against real tournament data yet; Playwright skipped; DB-level `locked_field` behaviour relies on the existing trigger and was not re-tested live.
