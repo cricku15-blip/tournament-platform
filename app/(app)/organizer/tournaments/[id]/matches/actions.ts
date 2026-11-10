@@ -176,7 +176,11 @@ export async function saveResult(tournamentId: string, input: unknown, expectedU
   if (publish) {
     const r = await rpc("publish_match_result", { p_match_id: v.matchId }, supabase);
     if (r.error) return { ok: false, error: r.error.message };
-    done(tournamentId, t.slug);
+    // Public player pages cache career stats per username; refresh everyone involved.
+    const ids = [...new Set([...v.batting, ...v.bowling, ...v.fielding, ...v.lineups, ...v.events].flatMap((x) => [("playerId" in x ? x.playerId : null) ?? null].filter(Boolean) as string[]))];
+    const { data: profs } = ids.length ? await supabase.from("public_profiles").select("username").in("id", ids) : { data: [] };
+    revalidateTournament({ id: tournamentId, slug: t.slug, playerUsernames: (profs ?? []).map((p) => p.username).filter((u): u is string => !!u) });
+    revalidatePath(`/organizer/tournaments/${tournamentId}`);
   }
   const { data: fresh } = await supabase.from("matches").select("updated_at").eq("id", v.matchId).single();
   return { ok: true, updatedAt: fresh?.updated_at ?? new Date().toISOString() };

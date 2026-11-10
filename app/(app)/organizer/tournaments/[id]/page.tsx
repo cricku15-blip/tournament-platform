@@ -17,6 +17,8 @@ import { PoolTab, type PoolRow } from "@/components/domain/organizer/manager/poo
 import { AnnouncementForm } from "@/components/domain/organizer/manager/announcements-tab";
 import { UpgradePlan } from "@/components/domain/payments/upgrade-plan";
 import { ReceiptLink } from "@/components/domain/payments/receipt-link";
+import { FixturesTab, type FxMatch } from "@/components/domain/organizer/manager/fixtures-tab";
+import { ResultsTab, type ResMatch } from "@/components/domain/organizer/manager/results-tab";
 import { SettingsTab } from "@/components/domain/organizer/manager/settings-tab";
 import { clientEnv } from "@/lib/env";
 import { formatDate, formatDateTime, formatINR } from "@/lib/format";
@@ -88,8 +90,8 @@ export default async function ManageTournamentPage({ params, searchParams }: Pro
         {tab === "plan" && <PlanSection t={t} />}
         {tab === "settings" && <SettingsTab id={t.id} name={t.name} status={t.status} visibility={t.visibility} />}
         {tab === "auction" && <Placeholder title="Auction" text="The live auction console arrives with the auction release." href={showPool ? `${base}/auction/console` : undefined} cta="Open console" />}
-        {tab === "fixtures" && <Placeholder title="Fixtures" text="Generate and publish the match schedule here once squads are locked." />}
-        {tab === "results" && <Placeholder title="Results" text="Enter results and stats here once the tournament is live." />}
+        {tab === "fixtures" && <FixturesSection t={t} />}
+        {tab === "results" && <ResultsSection t={t} />}
         {tab === "chat" && <Placeholder title="Chat" text="Tournament chat and moderation will appear here." />}
       </React.Suspense>
     </div>
@@ -340,4 +342,31 @@ async function PlanSection({ t }: { t: TournamentRow }) {
       </section>
     </div>
   );
+}
+
+async function FixturesSection({ t }: { t: TournamentRow }) {
+  const supabase = await createClient();
+  const [m, teams, st] = await Promise.all([
+    supabase.from("matches").select("id, stage, round_no, match_no, team_a_id, team_b_id, label_a, label_b, scheduled_at, venue, status, fixture_published, result_published_at").eq("tournament_id", t.id).order("match_no").limit(400),
+    supabase.from("teams").select("id, name").eq("tournament_id", t.id).eq("status", "approved").order("name").limit(64),
+    supabase.from("standings").select("team_id, position").eq("tournament_id", t.id).order("position").limit(8),
+  ]);
+  const matches: FxMatch[] = (m.data ?? []).map((x) => ({ ...x, has_result: x.result_published_at !== null }));
+  const leagueMatches = matches.filter((x) => x.stage === "league");
+  const leagueDone = leagueMatches.length > 0 && (m.data ?? []).filter((x) => x.stage === "league").every((x) => x.result_published_at !== null);
+  const teamList = teams.data ?? [];
+  const top = (st.data ?? []).slice(0, t.playoff_style === "top2_final" ? 2 : 4).map((x) => teamList.find((tm) => tm.id === x.team_id)?.name ?? "");
+  const canGenerate = ["registration_closed", "auction", "squads_locked", "live"].includes(t.status) && teamList.length >= 3;
+  return <FixturesTab tournamentId={t.id} status={t.status} format={t.format} legs={t.league_legs} playoffStyle={t.playoff_style} thirdPlace={t.third_place_match} teamCount={t.team_count} teams={teamList} matches={matches} standingsTop={top.filter(Boolean)} canGenerate={canGenerate} leagueDone={leagueDone} defaultStart={t.start_date ?? ""} />;
+}
+
+async function ResultsSection({ t }: { t: TournamentRow }) {
+  const supabase = await createClient();
+  const [m, teams] = await Promise.all([
+    supabase.from("matches").select("id, match_no, team_a_id, team_b_id, label_a, label_b, scheduled_at, status, result_published_at").eq("tournament_id", t.id).eq("fixture_published", true).order("scheduled_at", { ascending: true, nullsFirst: false }).order("match_no").limit(400),
+    supabase.from("teams").select("id, name").eq("tournament_id", t.id).limit(64),
+  ]);
+  const nm = (id: string | null, label: string | null) => (id ? teams.data?.find((x) => x.id === id)?.name : null) ?? label ?? "TBD";
+  const rows: ResMatch[] = (m.data ?? []).map((x) => ({ id: x.id, match_no: x.match_no, a: nm(x.team_a_id, x.label_a), b: nm(x.team_b_id, x.label_b), ready: Boolean(x.team_a_id && x.team_b_id), scheduled_at: x.scheduled_at, status: x.status, published: x.result_published_at !== null }));
+  return <ResultsTab tournamentId={t.id} matches={rows} canAct={["squads_locked", "live"].includes(t.status)} />;
 }
