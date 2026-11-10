@@ -130,7 +130,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/settings") ||
     pathname.startsWith("/subscription") ||
     pathname.startsWith("/notifications") ||
-    pathname.startsWith("/join") ||
+    /^\/tournaments\/[^/]+\/apply-(player|team)\/?$/.test(pathname) ||
     pathname === "/player" ||
     pathname.startsWith("/player/") ||
     pathname === "/manager" ||
