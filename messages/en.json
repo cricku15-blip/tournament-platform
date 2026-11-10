@@ -1,0 +1,61 @@
+{
+  "common": {
+    "appName": "GroundWar",
+    "tagline": "Local sports tournament management and live auctions",
+    "loading": "Loading...",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "save": "Save changes",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "search": "Search",
+    "filter": "Filter",
+    "allCities": "All cities"
+  },
+  "nav": {
+    "tournaments": "Tournaments",
+    "howItWorks": "How it works",
+    "pricing": "Pricing",
+    "about": "About",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "login": "Log in",
+    "signup": "Sign up",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "subscription": "Subscription",
+    "admin": "Admin"
+  },
+  "roles": {
+    "player": "Player",
+    "manager": "Manager",
+    "organizer": "Organizer",
+    "admin": "Admin",
+    "viewingAs": "Viewing as"
+  },
+  "status": {
+    "draft": "Draft",
+    "open": "Open",
+    "live": "Live",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "errors": {
+    "default": "Something went wrong. Try again.",
+    "not_authenticated": "Please log in to continue.",
+    "city_mismatch": "This tournament is in a different city than your profile city.",
+    "subscription_required": "An active player subscription is required to apply.",
+    "payment_required": "Tournament fee must be paid before publishing."
+  },
+  "system": {
+    "notFoundTitle": "We couldn't find that page.",
+    "errorTitle": "Something went wrong on our side.",
+    "maintenanceTitle": "We're making improvements. Back shortly."
+  }
+}
