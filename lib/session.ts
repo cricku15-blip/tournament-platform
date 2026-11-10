@@ -70,6 +70,7 @@ export const getUserRoles = cache(async (): Promise<UserRoles> => {
       .from("teams")
       .select("id")
       .eq("manager_id", user.id)
+      .eq("status", "approved")
       .limit(1),
   ]);
 
