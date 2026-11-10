@@ -15,6 +15,8 @@ import { TeamsTab, type TeamRow } from "@/components/domain/organizer/manager/te
 import { ApplicationsTable, type ApplicationRow } from "@/components/domain/organizer/manager/applications-table";
 import { PoolTab, type PoolRow } from "@/components/domain/organizer/manager/pool-tab";
 import { AnnouncementForm } from "@/components/domain/organizer/manager/announcements-tab";
+import { UpgradePlan } from "@/components/domain/payments/upgrade-plan";
+import { ReceiptLink } from "@/components/domain/payments/receipt-link";
 import { SettingsTab } from "@/components/domain/organizer/manager/settings-tab";
 import { clientEnv } from "@/lib/env";
 import { formatDate, formatDateTime, formatINR } from "@/lib/format";
@@ -306,10 +308,12 @@ async function AnnouncementsSection({ t }: { t: TournamentRow }) {
 
 async function PlanSection({ t }: { t: TournamentRow }) {
   const supabase = await createClient();
-  const [tier, pays] = await Promise.all([
+  const [tier, pays, top] = await Promise.all([
     t.pricing_tier_id ? supabase.from("pricing_tiers").select("name, amount_paise, min_teams, max_teams").eq("id", t.pricing_tier_id).maybeSingle() : Promise.resolve({ data: null }),
     supabase.from("tournament_payments").select("id, kind, total_paise, status, paid_at, invoice_url, created_at").eq("tournament_id", t.id).order("created_at", { ascending: false }).limit(10),
+    supabase.from("pricing_tiers").select("max_teams").eq("is_active", true).order("max_teams", { ascending: false }).limit(1).maybeSingle(),
   ]);
+  const maxTeams = top.data?.max_teams ?? t.team_count;
   return (
     <div className="flex flex-col gap-5">
       <section className="rounded-card border border-line bg-card p-5">
@@ -318,7 +322,7 @@ async function PlanSection({ t }: { t: TournamentRow }) {
         <p className="text-sm text-muted">{t.team_count} teams · status {STATUS_LABEL[t.status] ?? t.status}</p>
         <div className="mt-3 flex gap-2">
           {t.status === "draft" && <Button asChild><Link href={`/organizer/tournaments/${t.id}/checkout`}>Pay and publish</Link></Button>}
-          {!["draft", "completed", "cancelled"].includes(t.status) && <Button variant="secondary" disabled title="Plan upgrades arrive with payments">Upgrade plan</Button>}
+          {!["draft", "completed", "cancelled"].includes(t.status) && ["paid", "registration_open", "registration_closed"].includes(t.status) && <UpgradePlan id={t.id} current={t.team_count} max={maxTeams} />}
         </div>
       </section>
       <section className="rounded-card border border-line bg-card p-5" aria-label="Payments">
@@ -328,7 +332,7 @@ async function PlanSection({ t }: { t: TournamentRow }) {
             {(pays.data ?? []).map((p) => (
               <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
                 <span>{p.kind === "upgrade" ? "Plan upgrade" : "Tournament fee"} · {formatINR(p.total_paise)}</span>
-                <span className="flex items-center gap-3"><Badge variant={p.status === "paid" ? "open" : "neutral"}>{p.status}</Badge>{p.paid_at && <span className="text-muted">{formatDate(p.paid_at)}</span>}{p.invoice_url && <a className="font-semibold text-primary hover:underline" href={p.invoice_url} target="_blank" rel="noopener noreferrer">Invoice</a>}</span>
+                <span className="flex items-center gap-3"><Badge variant={p.status === "paid" ? "open" : "neutral"}>{p.status}</Badge>{p.paid_at && <span className="text-muted">{formatDate(p.paid_at)}</span>}{p.invoice_url && <ReceiptLink kind="tournament" paymentId={p.id} label="Invoice" />}</span>
               </li>
             ))}
           </ul>
