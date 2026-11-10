@@ -23,7 +23,10 @@ export default async function AdminRefunds({ searchParams }: { searchParams: Pro
   ]);
   const pay = (r: (typeof rows)[number]) => (r.payment_type === "tournament" ? (tp.data ?? []).find((x) => x.id === r.payment_id) : (sp2.data ?? []).find((x) => x.id === r.payment_id));
   const amount = (r: (typeof rows)[number]) => { const p = pay(r) as { total_paise?: number; amount_paise?: number } | undefined; return p ? formatINR(p.total_paise ?? p.amount_paise ?? 0) : "–"; };
-  const days = (r: (typeof rows)[number]) => { const p = pay(r) as { paid_at?: string | null } | undefined; return p?.paid_at ? Math.floor((Date.now() - new Date(p.paid_at).getTime()) / 86400000) : null; };
+  // Server component: runs once per request, so reading the clock here is safe.
+  // eslint-disable-next-line react-hooks/purity
+  const nowMs = Date.now();
+  const days = (r: (typeof rows)[number]) => { const p = pay(r) as { paid_at?: string | null } | undefined; return p?.paid_at ? Math.floor((nowMs - new Date(p.paid_at).getTime()) / 86400000) : null; };
 
   return (
     <div className="mx-auto max-w-6xl">
