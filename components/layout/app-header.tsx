@@ -53,7 +53,7 @@ export function AppHeader({ currentRole, roles, user }: AppHeaderProps) {
         <GlobalSearch />
 
         {/* Notifications Bell */}
-        <NotificationsBell />
+        <NotificationsBell userId={user.id} />
 
         {/* User Avatar Menu */}
         <UserMenu user={user} />

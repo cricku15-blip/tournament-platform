@@ -2,6 +2,7 @@ import * as React from "react";
 import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/layout/app-header";
 import { WorkspaceSidebar } from "@/components/layout/workspace-sidebar";
+import { createClient } from "@/lib/supabase/server";
 import { BottomBar } from "@/components/layout/bottom-bar";
 import {
   getSessionUser,
@@ -24,13 +25,20 @@ export default async function AppLayout({
   const roles = await getUserRoles();
   const currentRole = await getActiveRole();
 
+  let cityName: string | null = null;
+  if (profile?.city_id) {
+    const supabase = await createClient();
+    const { data: city } = await supabase.from("cities").select("name").eq("id", profile.city_id).maybeSingle();
+    cityName = city?.name ?? null;
+  }
+
   const userSummary = {
     id: user.id,
     email: user.email,
     fullName: profile?.full_name,
     avatarUrl: profile?.avatar_url,
     cityId: profile?.city_id,
-    cityName: profile?.city_id ? "Raipur" : null, // Handled dynamically in Plan 3
+    cityName,
     isAdmin: Boolean(profile?.is_admin),
   };
 
