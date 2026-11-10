@@ -19,6 +19,7 @@ import { UpgradePlan } from "@/components/domain/payments/upgrade-plan";
 import { ReceiptLink } from "@/components/domain/payments/receipt-link";
 import { FixturesTab, type FxMatch } from "@/components/domain/organizer/manager/fixtures-tab";
 import { ResultsTab, type ResMatch } from "@/components/domain/organizer/manager/results-tab";
+import { AuctionTab, type SimpleLot, type SoldRow } from "@/components/domain/organizer/manager/auction-tab";
 import { SettingsTab } from "@/components/domain/organizer/manager/settings-tab";
 import { clientEnv } from "@/lib/env";
 import { formatDate, formatDateTime, formatINR } from "@/lib/format";
@@ -89,7 +90,7 @@ export default async function ManageTournamentPage({ params, searchParams }: Pro
         {tab === "announcements" && <AnnouncementsSection t={t} />}
         {tab === "plan" && <PlanSection t={t} />}
         {tab === "settings" && <SettingsTab id={t.id} name={t.name} status={t.status} visibility={t.visibility} />}
-        {tab === "auction" && <Placeholder title="Auction" text="The live auction console arrives with the auction release." href={showPool ? `${base}/auction/console` : undefined} cta="Open console" />}
+        {tab === "auction" && (showPool ? <AuctionSection t={t} /> : <Placeholder title="Auction" text="This tournament uses direct squads, so there is no auction." />)}
         {tab === "fixtures" && <FixturesSection t={t} />}
         {tab === "results" && <ResultsSection t={t} />}
         {tab === "chat" && <Placeholder title="Chat" text="Tournament chat and moderation will appear here." />}
@@ -369,4 +370,34 @@ async function ResultsSection({ t }: { t: TournamentRow }) {
   const nm = (id: string | null, label: string | null) => (id ? teams.data?.find((x) => x.id === id)?.name : null) ?? label ?? "TBD";
   const rows: ResMatch[] = (m.data ?? []).map((x) => ({ id: x.id, match_no: x.match_no, a: nm(x.team_a_id, x.label_a), b: nm(x.team_b_id, x.label_b), ready: Boolean(x.team_a_id && x.team_b_id), scheduled_at: x.scheduled_at, status: x.status, published: x.result_published_at !== null }));
   return <ResultsTab tournamentId={t.id} matches={rows} canAct={["squads_locked", "live"].includes(t.status)} />;
+}
+
+async function AuctionSection({ t }: { t: TournamentRow }) {
+  const supabase = await createClient();
+  const [settings, teams, purses, pool, lots] = await Promise.all([
+    supabase.from("auction_settings").select("mode, status, pool_locked, scheduled_at, sequence_mode").eq("tournament_id", t.id).maybeSingle(),
+    supabase.from("teams").select("id, name, manager_id").eq("tournament_id", t.id).eq("status", "approved").order("name").limit(64),
+    supabase.from("team_purses").select("team_id").eq("tournament_id", t.id).limit(64),
+    supabase.from("pool_players").select("user_id, category, base_price, sequence_no, lot_status").eq("tournament_id", t.id).limit(1000),
+    supabase.from("auction_lots").select("player_id, status, sold_price, sold_team_id").eq("tournament_id", t.id).in("status", ["sold", "unsold"]).limit(1000),
+  ]);
+  const s = settings.data;
+  const approved = teams.data ?? [];
+  const poolRows = pool.data ?? [];
+  const ids = [...new Set([...(lots.data ?? []).map((l) => l.player_id), ...poolRows.filter((p) => p.lot_status !== "sold").map((p) => p.user_id)])];
+  const names = new Map<string, string>();
+  for (let i = 0; i < ids.length; i += 100) {
+    const { data } = await supabase.from("public_profiles").select("id, full_name").in("id", ids.slice(i, i + 100));
+    for (const p of data ?? []) if (p.id) names.set(p.id, p.full_name ?? "Player");
+  }
+  const checks = [
+    { label: "Player pool is locked", ok: Boolean(s?.pool_locked), hint: "Set categories and base prices, then lock the pool." },
+    { label: "At least 2 approved teams", ok: approved.length >= 2, hint: "Approve more teams in the Teams tab." },
+    { label: "Every approved team has a manager", ok: approved.length > 0 && approved.every((x) => x.manager_id), hint: "Invite managers for teams without one." },
+    { label: "Team purses are created", ok: approved.length > 0 && (purses.data ?? []).length >= approved.length, hint: "Purses are created when you lock the pool." },
+    { label: "Player order is set", ok: s?.sequence_mode !== "manual" || (poolRows.length > 0 && poolRows.every((p) => p.sequence_no !== null)), hint: "Drag players into order in the Players tab." },
+  ];
+  const sold: SoldRow[] = (lots.data ?? []).map((l) => ({ player: names.get(l.player_id) ?? "Player", category: poolRows.find((p) => p.user_id === l.player_id)?.category ?? null, team: approved.find((x) => x.id === l.sold_team_id)?.name ?? null, price: l.sold_price, status: l.status }));
+  const simple: SimpleLot[] = poolRows.filter((p) => p.lot_status === "upcoming" || p.lot_status === "unsold").map((p) => ({ id: p.user_id, name: names.get(p.user_id) ?? "Player", base: p.base_price, category: p.category }));
+  return <AuctionTab tournamentId={t.id} mode={s?.mode === "simple" ? "simple" : "live"} status={s?.status ?? "not_scheduled"} poolLocked={Boolean(s?.pool_locked)} scheduledAt={s?.scheduled_at ?? ""} checks={checks} canLock={t.status === "registration_closed"} sold={sold} lots={simple} teams={approved.map((x) => ({ id: x.id, name: x.name }))} />;
 }

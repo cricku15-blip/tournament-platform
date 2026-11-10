@@ -5,3 +5,4 @@ for f in create-tournament-order create-subscription cancel-subscription process
 done
 supabase functions deploy razorpay-webhook --no-verify-jwt --yes
 supabase functions deploy send-email --no-verify-jwt --yes
+supabase functions deploy send-reminders --no-verify-jwt --yes

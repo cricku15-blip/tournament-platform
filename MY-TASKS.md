@@ -14,6 +14,8 @@ Never put passwords or keys in chat or in git. Secrets go only in `.env` (gitign
 - [ ] Razorpay webhook URL to paste in Razorpay dashboard > Webhooks: `https://rljkmcncpsqigwmdbykb.supabase.co/functions/v1/razorpay-webhook` (events: payment.captured, order.paid, subscription.*, refund.*).
 
 ## Soon
+- [ ] **Apply migration 0016** (simple-mode auction sales and reminder flags): `supabase db push`, then tell Claude to regenerate `types/supabase.ts`. Needed before simple-mode auctions or `send-reminders` work.
+- [ ] **Schedule `send-reminders`** every 15 minutes and set the `SITE_URL` secret (see HANDOFF Plan 9).
 - [ ] Give Antigravity its start prompt (see WORK-SPLIT.md) on branch `plan-2-web-foundation`.
 - [ ] Answer the 15 open decisions in spec section 28 (Hindi? age rules? grace period? tax?). Needed before Plans 3, 6, 7.
 - [ ] Sign up once in the app, then tell Claude your email to run `scripts/make-admin.sql` (C8).

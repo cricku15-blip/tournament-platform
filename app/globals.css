@@ -154,3 +154,13 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Auction "SOLD" stamp: a short scale pop. Disabled for reduced motion. */
+@keyframes sold-pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sold-pop { animation: sold-pop 300ms ease-out; }
+}
