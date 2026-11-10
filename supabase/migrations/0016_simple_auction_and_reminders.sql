@@ -57,3 +57,5 @@ grant execute on function public.record_simple_sale(uuid, uuid, uuid, int) to au
 alter table public.matches add column if not exists reminded_24h boolean not null default false;
 alter table public.matches add column if not exists reminded_2h  boolean not null default false;
 create index if not exists matches_reminder_idx on public.matches (scheduled_at) where fixture_published and result_published_at is null;
+
+alter table public.auction_settings add column if not exists reminded_15m boolean not null default false;
