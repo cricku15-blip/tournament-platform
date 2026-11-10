@@ -131,9 +131,12 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/subscription") ||
     pathname.startsWith("/notifications") ||
     pathname.startsWith("/join") ||
-    pathname.startsWith("/player") ||
-    pathname.startsWith("/manager") ||
-    pathname.startsWith("/organizer");
+    pathname === "/player" ||
+    pathname.startsWith("/player/") ||
+    pathname === "/manager" ||
+    pathname.startsWith("/manager/") ||
+    pathname === "/organizer" ||
+    pathname.startsWith("/organizer/");
 
   const isAdminRoute = pathname.startsWith("/admin");
   const isAuthEntryRoute = pathname === "/login" || pathname === "/signup";

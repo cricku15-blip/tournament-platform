@@ -9,6 +9,7 @@ _none yet_
 | 1 Supabase backend | Claude | plan-1-supabase-backend | DB done, rest in progress | Migrations 0001-0015 applied to Supabase project `rljkmcncpsqigwmdbykb`. `types/supabase.ts` generated. Edge Functions written, NOT deployed (need Razorpay + Resend keys). pg_cron not yet enabled. |
 | 2 Web foundation | Antigravity | plan-2-web-foundation | Complete | Tasks 2.1-2.7 complete. All unit tests (31/31), lint, typecheck, and Next.js build pass. Landing bundle 128.56 KB (budget: < 150 KB). Zero server secrets in client bundle. Ready for Plans 3 & 4. |
 | 3 Auth/onboarding/account | Claude (took over from Antigravity) | plan-3-auth-onboarding-account | Complete (e2e needs real login to finish) | Pages C1-C5, D1, D2, D3, D5 + realtime bell. See below. |
+| 4 Public site | Claude | plan-4-public-site | Complete (needs seed data to eyeball tournament pages) | A1-A10, B1-B4, B6 + SEO. See below. |
 
 ## Plan 2 Handoff Details
 - **Branch:** `plan-2-web-foundation`
@@ -47,3 +48,18 @@ _none yet_
   - Playwright auth tests are written (`e2e/auth.spec.ts`); full sign-up-to-dashboard e2e needs a test user/inbox (not available). Lighthouse 95+ not measured yet.
   - Invite code box routes to `/join/<code>`, which Plan 7 builds. Dashboard links to `/subscription`, `/tournaments`, `/player/applications`, `/organizer/*` pages that later plans build.
 - **Env vars:** none new.
+
+
+## Plan 4 Handoff Details
+- **Branch:** `plan-4-public-site`.
+- **Done:** landing (A1, ISR 5 min + client city strip), How it works, Pricing (live DB, shows "unavailable" on failure, no hard-coded numbers), About, Contact (honeypot + 5/hour/IP), FAQ (from `site_settings.faq`, default list if empty), Terms/Privacy/Refund (draft text, flagged "pending legal review"), City page, Browse `/tournaments` (GET filters in URL, 12/page), Tournament page with tab routes (overview, teams, fixtures, standings, stats, auction, chat, rules), Team, Match (cricket and football scorecards), Player profile (respects show_*), `sitemap.xml`, `robots.txt`, OG images for tournament/team/match, `SportsEvent` JSON-LD.
+- **Data layer:** `lib/public/queries.ts` uses a cookie-less anon client + `unstable_cache` with tags `tournament:<id>`, `tournaments`, `tournament-slug:<slug>`, `player:<username>`. Later plans call `revalidateTournament()` from `lib/public/revalidate.ts` after publish, result, registration or announcement changes.
+- **Per-viewer state** (`TournamentActions`) loads from `/api/tournaments/viewer` (no-store), so pages stay cacheable. It links to Plan 7 pages: `/tournaments/<slug>/apply-player`, `/apply-team`, and to `/subscription` (Plan 6).
+- **Deviations / notes:**
+  - Browse uses offset paging (max page 500, 12/page) instead of keyset, because "live first, then soonest start" can't be expressed as a simple keyset. Revisit if the table grows past a few thousand rows.
+  - Shared fixes: `CitySelector` now gets real cities (it was using fake `city_raipur` ids that break the `change_city` RPC); middleware protected-route check no longer matches `/players/...`; root layout sets `metadataBase`.
+  - Terms/Privacy/Refund text is placeholder pending legal review. Terms state that the platform is not part of user money exchange and that auction points are virtual.
+  - Auction and Chat tabs are placeholders until Plan 9. Tournament "stats" minimums: strike rate 30 balls, economy 36 balls.
+  - Tables and leaderboards only show data for published tournaments; DB currently has no tournaments, so tournament, team and match pages were only verified for 404 behaviour and compile, not visually.
+  - Not measured: Lighthouse scores, 200-tournament seed timing, WhatsApp card preview, Playwright browse flow (tests skipped on owner's instruction).
+- **Env vars:** `NEXT_PUBLIC_APP_URL` should be set in production (used for canonical, sitemap, OG, JSON-LD).
