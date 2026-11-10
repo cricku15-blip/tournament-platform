@@ -12,6 +12,13 @@ export const ERROR_MESSAGES: Record<string, string> = {
   forbidden: "You do not have permission to perform this action.",
   not_found: "The requested item was not found.",
   invalid_status: "This action is not allowed in the current status.",
+  rate_limited: "Too many attempts. Please wait a minute and try again.",
+  no_active_subscription: "You don't have an active subscription.",
+  already_subscribed: "You already have an active subscription.",
+  amount_too_low: "This amount is too low to charge. Contact support.",
+  no_active_plan: "No subscription plan is available right now.",
+  bad_request: "That request wasn't valid. Please refresh and try again.",
+
   invalid_decision: "Invalid review decision provided.",
   already_reviewed: "This application has already been reviewed.",
   payment_required: "Tournament fee must be paid before publishing.",

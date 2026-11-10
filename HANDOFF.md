@@ -11,6 +11,7 @@ _none yet_
 | 3 Auth/onboarding/account | Claude (took over from Antigravity) | plan-3-auth-onboarding-account | Complete (e2e needs real login to finish) | Pages C1-C5, D1, D2, D3, D5 + realtime bell. See below. |
 | 4 Public site | Claude | plan-4-public-site | Complete (needs seed data to eyeball tournament pages) | A1-A10, B1-B4, B6 + SEO. See below. |
 | 5 Organizer workspace | Claude | plan-5-organizer-workspace | Complete | H1-H4 with 12 tabs. See below. |
+| 6 Payments and subscription | Claude | plan-6-payments-subscription | Code complete, NOT tested against Razorpay | H5 checkout + D4 subscription. See below. |
 
 ## Plan 2 Handoff Details
 - **Branch:** `plan-2-web-foundation`
@@ -72,3 +73,11 @@ _none yet_
 - **Needs later plans:** `/organizer/tournaments/[id]/checkout` (Plan 6), `/join/<code>` invite acceptance (Plan 7), Upgrade plan button (Plan 6), auction console (Plan 9), fixtures and results (Plan 8).
 - **Notes:** rules text and descriptions are plain text (no rich text editor yet). Date-times are converted to ISO in the browser. `checkSlug` uses the service role only to answer "taken or not". Team remove is allowed only until registration closes. Changing dates does not auto-announce; the Setup tab tells the organizer to post an announcement (the plan's auto-notify needs a small RPC; request it as a backend change if wanted).
 - **Not verified:** nothing run against real tournament data yet; Playwright skipped; DB-level `locked_field` behaviour relies on the existing trigger and was not re-tested live.
+
+## Plan 6 Handoff Details
+- **Branch:** `plan-6-payments-subscription`.
+- **Done:** `lib/razorpay/{load,checkout}.ts` (script loaded only on the two payment pages), `lib/payments/{poll,tax,eligibility,edge,http,actions}.ts`, route handlers under `/api/payments/*` (order, quote, tournament status, subscription, cancel, subscription status; each authenticated and rate limited, `no-store`), H5 `/organizer/tournaments/[id]/checkout` (also handles `?upgrade=N`), D4 `/subscription` (all 5 status variants, start/cancel/resume, billing history, FAQ), Plan tab Upgrade + signed-URL invoice links, tournament page actions now use the eligibility reasons ("Switch city", "Start subscription"). `docs/payments-testing.md` written.
+- **Money safety:** the page only ever shows server-computed quotes (`/api/payments/tournament-quote`); the charged amount comes from the `create-tournament-order` response; "paid" is read from the DB after the webhook (status endpoint), never from the Razorpay browser callback.
+- **NOT done / skipped:** 6.5 notification and email triggers (move to a Plan 9 scheduled job; the webhook was not changed); Playwright with mocked Razorpay (owner said skip browser tests). Unit tests for `withTax`, poll and eligibility pass.
+- **Blocked on owner:** nothing in this plan can be exercised end to end until `RAZORPAY_*` and `RESEND_API_KEY` are set in `.env`, `supabase secrets set` is run, and the webhook is added in the Razorpay dashboard (see MY-TASKS.md). Follow `docs/payments-testing.md`.
+- **Known gaps:** a failed payment on a "past due" subscription creates a fresh subscription via `create-subscription` (that function does not special-case past_due); the grace-period length shown on the page comes from `subscriptions.grace_until`, not hard-coded. The invoice/receipt link needs `generate-invoice` to have run (it fills `invoice_url` / `receipt_url`).

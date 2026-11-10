@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { REASON_COPY, type ApplyReason } from "@/lib/payments/eligibility";
 
 interface Viewer {
   loggedIn: boolean;
@@ -13,6 +14,7 @@ interface Viewer {
   applicationStatus?: string | null;
   teamStatus?: string | null;
   isOrganizer?: boolean;
+  eligibility?: { canApply: boolean; reason: ApplyReason };
 }
 
 export function TournamentActions({
@@ -78,24 +80,24 @@ export function TournamentActions({
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap gap-2">
         {allowPlayers &&
-          (viewer.applicationStatus ? (
-            <Button variant="secondary" disabled>
-              Application {viewer.applicationStatus}
-            </Button>
-          ) : !viewer.cityMatch ? (
-            <Button variant="secondary" disabled>
-              Different city
-            </Button>
-          ) : !viewer.subscribed ? (
-            <Button asChild>
-              <Link href="/subscription">Subscribe to apply</Link>
-            </Button>
-          ) : (
+          (viewer.eligibility?.canApply ? (
             <Button asChild>
               <Link href={`${base}/apply-player`}>Apply as a player</Link>
             </Button>
-          ))}
-        {teamEntry === "open" && !viewer.teamStatus && (
+          ) : viewer.eligibility?.reason === "city_mismatch" ? (
+            <Button asChild variant="secondary">
+              <Link href="/profile">Switch city</Link>
+            </Button>
+          ) : viewer.eligibility?.reason === "subscription_required" ? (
+            <Button asChild>
+              <Link href="/subscription">Start subscription</Link>
+            </Button>
+          ) : viewer.eligibility?.reason === "already_applied" ? (
+            <Button variant="secondary" disabled>
+              Application {viewer.applicationStatus ?? "sent"}
+            </Button>
+          ) : null)}
+        {teamEntry !== "invite" && !viewer.teamStatus && (
           <Button asChild variant="secondary">
             <Link href={`${base}/apply-team`}>Join with your team</Link>
           </Button>
@@ -106,8 +108,8 @@ export function TournamentActions({
           </Button>
         )}
       </div>
-      {allowPlayers && !viewer.cityMatch && !viewer.applicationStatus && (
-        <p className="text-xs text-muted">This tournament is in a different city than your profile city.</p>
+      {allowPlayers && viewer.eligibility && !viewer.eligibility.canApply && viewer.eligibility.reason !== "not_logged_in" && viewer.eligibility.reason !== "registration_closed" && (
+        <p className="text-xs text-muted">{REASON_COPY[viewer.eligibility.reason as Exclude<ApplyReason, "ok">]}</p>
       )}
     </div>
   );
