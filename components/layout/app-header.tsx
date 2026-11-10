@@ -12,6 +12,7 @@ import type { UserRole, UserRoles } from "@/lib/session";
 export interface AppHeaderProps {
   currentRole: UserRole;
   roles: UserRoles;
+  cities?: Array<{ id: string; name: string; state?: string | null; slug?: string }>;
   user: {
     id: string;
     email?: string | null;
@@ -23,7 +24,7 @@ export interface AppHeaderProps {
   };
 }
 
-export function AppHeader({ currentRole, roles, user }: AppHeaderProps) {
+export function AppHeader({ currentRole, roles, user, cities }: AppHeaderProps) {
   return (
     <header className="sticky top-0 z-40 flex h-[72px] w-full items-center justify-between border-b border-line bg-card/95 px-4 sm:px-6 backdrop-blur-xs select-none">
       <div className="flex items-center gap-4 sm:gap-6">
@@ -41,6 +42,7 @@ export function AppHeader({ currentRole, roles, user }: AppHeaderProps) {
             isLoggedIn={true}
             currentCityId={user.cityId}
             currentCityName={user.cityName}
+            cities={cities?.map((c) => ({ ...c, state: c.state ?? undefined }))}
           />
         </div>
 

@@ -21,14 +21,12 @@ export function TournamentActions({
   status,
   allowPlayers,
   teamEntry,
-  squadMode,
 }: {
   id: string;
   slug: string;
   status: string;
   allowPlayers: boolean;
   teamEntry: string;
-  squadMode: string;
 }) {
   const [viewer, setViewer] = React.useState<Viewer | null>(null);
   const [failed, setFailed] = React.useState(false);

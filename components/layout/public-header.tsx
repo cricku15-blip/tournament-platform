@@ -13,7 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-export function PublicHeader() {
+export function PublicHeader({ cities }: { cities?: Array<{ id: string; name: string; state?: string | null; slug?: string }> }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   return (
@@ -29,7 +29,7 @@ export function PublicHeader() {
 
         {/* City Selector */}
         <div className="hidden sm:block">
-          <CitySelector isLoggedIn={false} />
+          <CitySelector isLoggedIn={false} cities={cities?.map((c) => ({ ...c, state: c.state ?? undefined }))} />
         </div>
 
         {/* Nav Links */}
@@ -55,7 +55,7 @@ export function PublicHeader() {
       <div className="flex items-center gap-3">
         {/* City selector on mobile */}
         <div className="sm:hidden">
-          <CitySelector isLoggedIn={false} />
+          <CitySelector isLoggedIn={false} cities={cities?.map((c) => ({ ...c, state: c.state ?? undefined }))} />
         </div>
 
         {/* Desktop auth buttons */}

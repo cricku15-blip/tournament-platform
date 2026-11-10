@@ -18,6 +18,7 @@ const figtree = Figtree({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   title: "Sports Tournament Platform",
   description: "Local sports tournament management and live auctions",
 };

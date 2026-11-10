@@ -61,7 +61,6 @@ export default async function TournamentLayout({ children, params }: { children:
               status={t.status}
               allowPlayers={Boolean(t.allow_player_applications)}
               teamEntry={String(t.team_entry)}
-              squadMode={t.squad_mode}
             />
             <ShareButtons url={url} title={t.name} />
           </div>

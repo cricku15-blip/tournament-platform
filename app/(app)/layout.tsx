@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/layout/app-header";
 import { WorkspaceSidebar } from "@/components/layout/workspace-sidebar";
 import { createClient } from "@/lib/supabase/server";
+import { getCities } from "@/lib/public/queries";
 import { BottomBar } from "@/components/layout/bottom-bar";
 import {
   getSessionUser,
@@ -32,6 +33,8 @@ export default async function AppLayout({
     cityName = city?.name ?? null;
   }
 
+  const cities = await getCities().catch(() => undefined);
+
   const userSummary = {
     id: user.id,
     email: user.email,
@@ -48,6 +51,7 @@ export default async function AppLayout({
         currentRole={currentRole}
         roles={roles}
         user={userSummary}
+        cities={cities}
       />
       <div className="flex flex-1">
         <WorkspaceSidebar role={currentRole} />

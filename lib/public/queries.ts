@@ -63,7 +63,7 @@ export const getSiteSetting = unstable_cache(
 export const getPricing = unstable_cache(
   async () => {
     const [tiers, plans] = await Promise.all([
-      publicDb.from("pricing_tiers").select("id, name, amount_paise, max_teams, description").eq("is_active", true).order("amount_paise"),
+      publicDb.from("pricing_tiers").select("id, name, min_teams, max_teams, amount_paise").eq("is_active", true).order("sort_order"),
       publicDb.from("player_plans").select("id, name, amount_paise, description, benefits, grace_days").eq("is_active", true).order("amount_paise"),
     ]);
     if (tiers.error || plans.error) return null;
