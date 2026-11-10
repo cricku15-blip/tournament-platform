@@ -22,6 +22,8 @@ export const ERROR_MESSAGES: Record<string, string> = {
   invalid_manual_order: "The manual team order is not valid.",
   start_date_required: "Choose a start date for the fixtures.",
   stale_result: "This result was updated by someone else. Reload to see changes.",
+  not_simple_mode: "This tournament does not use simple auction mode.",
+  price_below_base: "The price can't be below the player's base price.",
   rate_limited: "Too many attempts. Please wait a minute and try again.",
   no_active_subscription: "You don't have an active subscription.",
   already_subscribed: "You already have an active subscription.",
