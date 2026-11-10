@@ -31,13 +31,14 @@ export default async function OrganizerHome() {
   const list = data ?? [];
   const ids = list.map((t) => t.id);
 
-  const [apps, teams, pools] = ids.length
+  const [apps, teams, pools, openMatches] = ids.length
     ? await Promise.all([
         supabase.from("player_applications").select("tournament_id").in("tournament_id", ids).eq("status", "pending").limit(1000),
         supabase.from("teams").select("tournament_id").in("tournament_id", ids).eq("status", "pending").limit(1000),
         supabase.from("auction_settings").select("tournament_id, pool_locked").in("tournament_id", ids).eq("pool_locked", false),
+        supabase.from("matches").select("tournament_id").in("tournament_id", ids).eq("fixture_published", true).is("result_published_at", null).not("team_a_id", "is", null).not("team_b_id", "is", null).lt("scheduled_at", new Date().toISOString()).limit(1000),
       ])
-    : [{ data: [] }, { data: [] }, { data: [] }];
+    : [{ data: [] }, { data: [] }, { data: [] }, { data: [] }];
 
   const count = (rows: Array<{ tournament_id: string }> | null) => {
     const m = new Map<string, number>();
@@ -46,6 +47,7 @@ export default async function OrganizerHome() {
   };
   const pendingApps = count(apps.data);
   const pendingTeams = count(teams.data);
+  const needResult = count(openMatches.data);
   const unlockedPools = new Set((pools.data ?? []).map((p) => p.tournament_id));
 
   const attention: Attention[] = [];
@@ -55,6 +57,7 @@ export default async function OrganizerHome() {
     if (t.status === "paid") attention.push({ key: `p${t.id}`, text: `${t.name} is paid but not published yet.`, href });
     if (pendingApps.get(t.id)) attention.push({ key: `a${t.id}`, text: `${pendingApps.get(t.id)} player application${pendingApps.get(t.id) === 1 ? "" : "s"} to review in ${t.name}.`, href: `${href}?tab=applications` });
     if (pendingTeams.get(t.id)) attention.push({ key: `t${t.id}`, text: `${pendingTeams.get(t.id)} team approval${pendingTeams.get(t.id) === 1 ? "" : "s"} waiting in ${t.name}.`, href: `${href}?tab=teams` });
+    if (needResult.get(t.id)) attention.push({ key: `r${t.id}`, text: `${needResult.get(t.id)} played match${needResult.get(t.id) === 1 ? "" : "es"} need a result in ${t.name}.`, href: `${href}?tab=results` });
     if (t.squad_mode === "auction" && t.status === "registration_closed" && unlockedPools.has(t.id)) attention.push({ key: `l${t.id}`, text: `Lock the player pool for ${t.name}.`, href: `${href}?tab=pool` });
   }
 

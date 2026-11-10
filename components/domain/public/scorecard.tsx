@@ -100,7 +100,7 @@ const EVENT_LABEL: Record<string, string> = {
   penalty_goal: "Penalty",
   yellow: "Yellow card",
   red: "Red card",
-  substitution: "Substitution",
+  sub: "Substitution",
 };
 
 export function FootballScorecard({ lineups, events, names, teamNames }: { lineups: Row[]; events: Row[]; names: Names; teamNames: Record<string, string> }) {

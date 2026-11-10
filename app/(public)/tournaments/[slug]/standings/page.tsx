@@ -19,7 +19,7 @@ export default async function StandingsPage({ params }: Props) {
   const map = teamMapFrom(teams);
   const knockout = matches.filter((m) => m.stage !== "league");
   const showTable = t.format !== "knockout";
-  const qualifying = t.format === "league_playoffs" ? (t.playoff_style === "top2" ? 2 : 4) : 0;
+  const qualifying = t.format === "league_playoffs" ? (t.playoff_style === "top2_final" ? 2 : 4) : 0;
   const nothingYet = (!showTable || rows.every((r) => !r.played)) && knockout.length === 0;
 
   if (nothingYet) return <EmptyState title="No standings yet" description="Standings update automatically as results are published." />;

@@ -54,7 +54,7 @@ export const formatSchema = z
     format: z.enum(["league", "knockout", "league_playoffs"]),
     teamCount: z.number().int().min(3, "At least 3 teams."),
     leagueLegs: z.union([z.literal(1), z.literal(2)]),
-    playoffStyle: z.enum(["top2", "top4", "qualifier"]).nullable().optional(),
+    playoffStyle: z.enum(["top2_final", "top4_semis", "qualifier_style"]).nullable().optional(),
     thirdPlaceMatch: z.boolean(),
     seedingMethod: z.enum(["random", "manual"]),
   })

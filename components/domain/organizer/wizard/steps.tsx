@@ -131,7 +131,7 @@ export function FormatStep(p: StepProps) {
             type="button"
             role="radio"
             aria-checked={d.format === f.v}
-            onClick={() => patch({ format: f.v, playoffStyle: f.v === "league_playoffs" ? d.playoffStyle ?? "top4" : null })}
+            onClick={() => patch({ format: f.v, playoffStyle: f.v === "league_playoffs" ? d.playoffStyle ?? "top4_semis" : null })}
             className={cn("min-h-11 rounded-card border p-4 text-left focus-visible:outline-2 focus-visible:outline-primary", d.format === f.v ? "border-primary bg-primary/10" : "border-line bg-card")}
           >
             <span className="block font-display text-lg font-bold">{f.title}</span>
@@ -161,12 +161,12 @@ export function FormatStep(p: StepProps) {
           <FormField id="w-playoff" label="Playoff style" required error={errors.playoffStyle}>
             <Select2
               id="w-playoff"
-              value={d.playoffStyle ?? "top4"}
+              value={d.playoffStyle ?? "top4_semis"}
               onChange={(v) => patch({ playoffStyle: v as DraftState["playoffStyle"] })}
               options={[
-                { value: "top2", label: "Top 2 play the final" },
-                { value: "top4", label: "Top 4 semi-finals" },
-                ...(!football ? [{ value: "qualifier", label: "Top 4 qualifier style" }] : []),
+                { value: "top2_final", label: "Top 2 play the final" },
+                { value: "top4_semis", label: "Top 4 semi-finals" },
+                ...(!football ? [{ value: "qualifier_style", label: "Top 4 qualifier style" }] : []),
               ]}
             />
           </FormField>
