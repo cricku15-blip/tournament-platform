@@ -14,6 +14,8 @@ Never put passwords or keys in chat or in git. Secrets go only in `.env` (gitign
 - [ ] Razorpay webhook URL to paste in Razorpay dashboard > Webhooks: `https://rljkmcncpsqigwmdbykb.supabase.co/functions/v1/razorpay-webhook` (events: payment.captured, order.paid, subscription.*, refund.*).
 
 ## Soon
+- [ ] **Apply migration 0017** (admin support: suspension end dates, tournament notes, dashboard RPC) with `supabase db push`, then tell Claude to regenerate types. Until then the admin dashboard tiles are blank.
+- [ ] Create a **staging** Supabase project and run `scripts/seed-staging.sql`, then the k6 tests in `loadtest/` (Claude can help read the results).
 - [ ] **Apply migration 0016** (simple-mode auction sales and reminder flags): `supabase db push`, then tell Claude to regenerate `types/supabase.ts`. Needed before simple-mode auctions or `send-reminders` work.
 - [ ] **Schedule `send-reminders`** every 15 minutes and set the `SITE_URL` secret (see HANDOFF Plan 9).
 - [ ] Give Antigravity its start prompt (see WORK-SPLIT.md) on branch `plan-2-web-foundation`.
