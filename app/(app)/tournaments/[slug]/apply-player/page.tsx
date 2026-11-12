@@ -73,7 +73,7 @@ export default async function ApplyPlayerPage({ params }: { params: Promise<{ sl
     );
   }
   if (!blocked && sub.data !== true) {
-    blocked = <Blocked title="Subscription needed" text={REASON_COPY.subscription_required}><Button asChild><Link href="/subscription">Start subscription</Link></Button></Blocked>;
+    blocked = <Blocked title="Subscription needed" text={REASON_COPY.subscription_required}><Button asChild><Link href="/subscription">Get 30-day pass</Link></Button></Blocked>;
   }
   if (!blocked && existing.data && existing.data.status !== "withdrawn") {
     blocked = <Blocked title="You've already applied" text={`Your application status is ${existing.data.status}.`}><Button asChild variant="secondary"><Link href="/player/applications">See my applications</Link></Button></Blocked>;

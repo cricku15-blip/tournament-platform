@@ -26,7 +26,7 @@ export const REASON_COPY: Record<Exclude<ApplyReason, "ok">, string> = {
   not_logged_in: "Log in to apply.",
   registration_closed: "Registration is closed for this tournament.",
   city_mismatch: "This tournament is in a different city than your profile city.",
-  subscription_required: "An active player subscription is required to apply.",
+  subscription_required: "An active player pass is required to apply.",
   already_applied: "You have already applied to this tournament.",
 };
 
@@ -34,7 +34,10 @@ export type SubscriptionView = "none" | "active" | "cancelling" | "past_due" | "
 
 export function subscriptionView(s: { status: string; cancel_at_period_end: boolean; current_period_end: string | null; grace_until: string | null } | null, now = new Date()): SubscriptionView {
   if (!s || s.status === "created") return "none";
-  if (s.status === "active") return s.cancel_at_period_end ? "cancelling" : "active";
+  if (s.status === "active") {
+    if (s.current_period_end && new Date(s.current_period_end) <= now) return "expired";
+    return s.cancel_at_period_end ? "cancelling" : "active";
+  }
   if (s.status === "cancelled") return s.current_period_end && new Date(s.current_period_end) > now ? "cancelling" : "expired";
   if (s.status === "past_due") return "past_due";
   return "expired";

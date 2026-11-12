@@ -38,7 +38,7 @@ export default async function PricingPage() {
               {pricing.plans.map((p) => (
                 <li key={p.id} className="rounded-card border border-line bg-card p-5">
                   <h3 className="font-display text-xl font-bold">{p.name}</h3>
-                  <p className="mt-2 font-display text-3xl font-bold text-primary">{formatINR(p.amount_paise)}<span className="text-base font-normal text-muted"> / month</span></p>
+                  <p className="mt-2 font-display text-3xl font-bold text-primary">{formatINR(p.amount_paise)}<span className="text-base font-normal text-muted"> / 30 days</span></p>
                   {p.description && <p className="mt-2 text-sm text-ink/90">{p.description}</p>}
                   {Array.isArray(p.benefits) && (
                     <ul className="mt-3 list-disc pl-5 text-sm text-ink/90">

@@ -33,6 +33,22 @@ serve(async (req) => {
             const { error } = await sb.rpc("confirm_tournament_payment", { p_order_id: orderId, p_payment_id: paymentId });
             if (error) throw error;
             sb.functions.invoke("generate-invoice", { body: { payment_type: "tournament", payment_id: tp.id } }).catch(console.error);
+          } else {
+            // One-time 30-day player pass
+            const { data: pass } = await sb.from("subscriptions").select("id, user_id, status").eq("razorpay_order_id", orderId).maybeSingle();
+            if (pass && pay) {
+              if (pass.status === "created" || pass.status === "expired") {
+                await sb.from("subscriptions").update({
+                  status: "active", cancel_at_period_end: false, grace_until: null,
+                  current_period_end: new Date(Date.now() + 30 * 86400000).toISOString(),
+                }).eq("id", pass.id);
+              }
+              const { data: sp } = await sb.from("subscription_payments").upsert({
+                subscription_id: pass.id, user_id: pass.user_id, amount_paise: pay.amount, status: "paid",
+                razorpay_payment_id: pay.id, paid_at: new Date().toISOString(),
+              }, { onConflict: "razorpay_payment_id" }).select("id").single();
+              if (sp) sb.functions.invoke("generate-invoice", { body: { payment_type: "subscription", payment_id: sp.id } }).catch(console.error);
+            }
           }
         }
         break;

@@ -155,14 +155,14 @@ isOneToOne: false
                   ]
                 },"auction_settings": {
                   Row: {
-                    "base_prices": NonNullable<Json>,"categories": NonNullable<Json>,"category_limits": NonNullable<Json>,"created_at": string,"increment_slabs": NonNullable<Json>,"mode": string,"pool_locked": boolean,"purse": number,"reserve_rule": boolean,"scheduled_at": string | null,"sequence_mode": string,"status": Database["public"]['Enums']["auction_status"],"tournament_id": string,"unsold_round": boolean,"updated_at": string
+                    "base_prices": NonNullable<Json>,"categories": NonNullable<Json>,"category_limits": NonNullable<Json>,"created_at": string,"increment_slabs": NonNullable<Json>,"mode": string,"pool_locked": boolean,"purse": number,"reminded_15m": boolean,"reserve_rule": boolean,"scheduled_at": string | null,"sequence_mode": string,"status": Database["public"]['Enums']["auction_status"],"tournament_id": string,"unsold_round": boolean,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "base_prices"?: NonNullable<Json>,"categories"?: NonNullable<Json>,"category_limits"?: NonNullable<Json>,"created_at"?: string,"increment_slabs"?: NonNullable<Json>,"mode"?: string,"pool_locked"?: boolean,"purse"?: number,"reserve_rule"?: boolean,"scheduled_at"?: string | null,"sequence_mode"?: string,"status"?: Database["public"]['Enums']["auction_status"],"tournament_id": string,"unsold_round"?: boolean,"updated_at"?: string
+                    "base_prices"?: NonNullable<Json>,"categories"?: NonNullable<Json>,"category_limits"?: NonNullable<Json>,"created_at"?: string,"increment_slabs"?: NonNullable<Json>,"mode"?: string,"pool_locked"?: boolean,"purse"?: number,"reminded_15m"?: boolean,"reserve_rule"?: boolean,"scheduled_at"?: string | null,"sequence_mode"?: string,"status"?: Database["public"]['Enums']["auction_status"],"tournament_id": string,"unsold_round"?: boolean,"updated_at"?: string
                   }
                   Update: {
-                    "base_prices"?: NonNullable<Json>,"categories"?: NonNullable<Json>,"category_limits"?: NonNullable<Json>,"created_at"?: string,"increment_slabs"?: NonNullable<Json>,"mode"?: string,"pool_locked"?: boolean,"purse"?: number,"reserve_rule"?: boolean,"scheduled_at"?: string | null,"sequence_mode"?: string,"status"?: Database["public"]['Enums']["auction_status"],"tournament_id"?: string,"unsold_round"?: boolean,"updated_at"?: string
+                    "base_prices"?: NonNullable<Json>,"categories"?: NonNullable<Json>,"category_limits"?: NonNullable<Json>,"created_at"?: string,"increment_slabs"?: NonNullable<Json>,"mode"?: string,"pool_locked"?: boolean,"purse"?: number,"reminded_15m"?: boolean,"reserve_rule"?: boolean,"scheduled_at"?: string | null,"sequence_mode"?: string,"status"?: Database["public"]['Enums']["auction_status"],"tournament_id"?: string,"unsold_round"?: boolean,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -667,14 +667,14 @@ isOneToOne: false
                   ]
                 },"matches": {
                   Row: {
-                    "group_no": number | null,"created_at": string,"fixture_published": boolean,"id": string,"label_a": string | null,"label_b": string | null,"loser_next_match_id": string | null,"loser_next_slot": string | null,"match_no": number | null,"next_match_id": string | null,"next_slot": string | null,"notes": string | null,"player_of_match_id": string | null,"result_published_at": string | null,"result_text": string | null,"result_type": string | null,"round_no": number | null,"scheduled_at": string | null,"score_a": NonNullable<Json>,"score_b": NonNullable<Json>,"stage": string,"status": Database["public"]['Enums']["match_status"],"team_a_id": string | null,"team_b_id": string | null,"toss": Json | null,"tournament_id": string,"updated_at": string,"venue": string | null,"winner_team_id": string | null
+                    "created_at": string,"fixture_published": boolean,"group_no": number | null,"id": string,"label_a": string | null,"label_b": string | null,"loser_next_match_id": string | null,"loser_next_slot": string | null,"match_no": number | null,"next_match_id": string | null,"next_slot": string | null,"notes": string | null,"player_of_match_id": string | null,"reminded_24h": boolean,"reminded_2h": boolean,"result_published_at": string | null,"result_text": string | null,"result_type": string | null,"round_no": number | null,"scheduled_at": string | null,"score_a": NonNullable<Json>,"score_b": NonNullable<Json>,"stage": string,"status": Database["public"]['Enums']["match_status"],"team_a_id": string | null,"team_b_id": string | null,"toss": Json | null,"tournament_id": string,"updated_at": string,"venue": string | null,"winner_team_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "group_no"?: number | null,"created_at"?: string,"fixture_published"?: boolean,"id"?: string,"label_a"?: string | null,"label_b"?: string | null,"loser_next_match_id"?: string | null,"loser_next_slot"?: string | null,"match_no"?: number | null,"next_match_id"?: string | null,"next_slot"?: string | null,"notes"?: string | null,"player_of_match_id"?: string | null,"result_published_at"?: string | null,"result_text"?: string | null,"result_type"?: string | null,"round_no"?: number | null,"scheduled_at"?: string | null,"score_a"?: NonNullable<Json>,"score_b"?: NonNullable<Json>,"stage"?: string,"status"?: Database["public"]['Enums']["match_status"],"team_a_id"?: string | null,"team_b_id"?: string | null,"toss"?: Json | null,"tournament_id": string,"updated_at"?: string,"venue"?: string | null,"winner_team_id"?: string | null
+                    "created_at"?: string,"fixture_published"?: boolean,"group_no"?: number | null,"id"?: string,"label_a"?: string | null,"label_b"?: string | null,"loser_next_match_id"?: string | null,"loser_next_slot"?: string | null,"match_no"?: number | null,"next_match_id"?: string | null,"next_slot"?: string | null,"notes"?: string | null,"player_of_match_id"?: string | null,"reminded_24h"?: boolean,"reminded_2h"?: boolean,"result_published_at"?: string | null,"result_text"?: string | null,"result_type"?: string | null,"round_no"?: number | null,"scheduled_at"?: string | null,"score_a"?: NonNullable<Json>,"score_b"?: NonNullable<Json>,"stage"?: string,"status"?: Database["public"]['Enums']["match_status"],"team_a_id"?: string | null,"team_b_id"?: string | null,"toss"?: Json | null,"tournament_id": string,"updated_at"?: string,"venue"?: string | null,"winner_team_id"?: string | null
                   }
                   Update: {
-                    "group_no"?: number | null,"created_at"?: string,"fixture_published"?: boolean,"id"?: string,"label_a"?: string | null,"label_b"?: string | null,"loser_next_match_id"?: string | null,"loser_next_slot"?: string | null,"match_no"?: number | null,"next_match_id"?: string | null,"next_slot"?: string | null,"notes"?: string | null,"player_of_match_id"?: string | null,"result_published_at"?: string | null,"result_text"?: string | null,"result_type"?: string | null,"round_no"?: number | null,"scheduled_at"?: string | null,"score_a"?: NonNullable<Json>,"score_b"?: NonNullable<Json>,"stage"?: string,"status"?: Database["public"]['Enums']["match_status"],"team_a_id"?: string | null,"team_b_id"?: string | null,"toss"?: Json | null,"tournament_id"?: string,"updated_at"?: string,"venue"?: string | null,"winner_team_id"?: string | null
+                    "created_at"?: string,"fixture_published"?: boolean,"group_no"?: number | null,"id"?: string,"label_a"?: string | null,"label_b"?: string | null,"loser_next_match_id"?: string | null,"loser_next_slot"?: string | null,"match_no"?: number | null,"next_match_id"?: string | null,"next_slot"?: string | null,"notes"?: string | null,"player_of_match_id"?: string | null,"reminded_24h"?: boolean,"reminded_2h"?: boolean,"result_published_at"?: string | null,"result_text"?: string | null,"result_type"?: string | null,"round_no"?: number | null,"scheduled_at"?: string | null,"score_a"?: NonNullable<Json>,"score_b"?: NonNullable<Json>,"stage"?: string,"status"?: Database["public"]['Enums']["match_status"],"team_a_id"?: string | null,"team_b_id"?: string | null,"toss"?: Json | null,"tournament_id"?: string,"updated_at"?: string,"venue"?: string | null,"winner_team_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -953,14 +953,14 @@ isOneToOne: false
                   ]
                 },"profiles": {
                   Row: {
-                    "avatar_url": string | null,"bio": string | null,"city_id": string | null,"created_at": string,"date_of_birth": string | null,"full_name": string | null,"id": string,"is_admin": boolean,"onboarded_at": string | null,"phone": string | null,"show_age": boolean,"show_city": boolean,"show_stats": boolean,"status": Database["public"]['Enums']["user_status"],"updated_at": string,"username": string | null
+                    "avatar_url": string | null,"bio": string | null,"city_id": string | null,"created_at": string,"date_of_birth": string | null,"full_name": string | null,"id": string,"is_admin": boolean,"onboarded_at": string | null,"phone": string | null,"show_age": boolean,"show_city": boolean,"show_stats": boolean,"status": Database["public"]['Enums']["user_status"],"suspended_until": string | null,"updated_at": string,"username": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "avatar_url"?: string | null,"bio"?: string | null,"city_id"?: string | null,"created_at"?: string,"date_of_birth"?: string | null,"full_name"?: string | null,"id": string,"is_admin"?: boolean,"onboarded_at"?: string | null,"phone"?: string | null,"show_age"?: boolean,"show_city"?: boolean,"show_stats"?: boolean,"status"?: Database["public"]['Enums']["user_status"],"updated_at"?: string,"username"?: string | null
+                    "avatar_url"?: string | null,"bio"?: string | null,"city_id"?: string | null,"created_at"?: string,"date_of_birth"?: string | null,"full_name"?: string | null,"id": string,"is_admin"?: boolean,"onboarded_at"?: string | null,"phone"?: string | null,"show_age"?: boolean,"show_city"?: boolean,"show_stats"?: boolean,"status"?: Database["public"]['Enums']["user_status"],"suspended_until"?: string | null,"updated_at"?: string,"username"?: string | null
                   }
                   Update: {
-                    "avatar_url"?: string | null,"bio"?: string | null,"city_id"?: string | null,"created_at"?: string,"date_of_birth"?: string | null,"full_name"?: string | null,"id"?: string,"is_admin"?: boolean,"onboarded_at"?: string | null,"phone"?: string | null,"show_age"?: boolean,"show_city"?: boolean,"show_stats"?: boolean,"status"?: Database["public"]['Enums']["user_status"],"updated_at"?: string,"username"?: string | null
+                    "avatar_url"?: string | null,"bio"?: string | null,"city_id"?: string | null,"created_at"?: string,"date_of_birth"?: string | null,"full_name"?: string | null,"id"?: string,"is_admin"?: boolean,"onboarded_at"?: string | null,"phone"?: string | null,"show_age"?: boolean,"show_city"?: boolean,"show_stats"?: boolean,"status"?: Database["public"]['Enums']["user_status"],"suspended_until"?: string | null,"updated_at"?: string,"username"?: string | null
                   }
                   Relationships: [
                     {
@@ -1153,14 +1153,14 @@ isOneToOne: false
                   ]
                 },"standings": {
                   Row: {
-                    "group_no": number | null,"balls_against": number,"balls_for": number,"drawn": number,"ga": number,"gd": number,"gf": number,"lost": number,"no_result": number,"nrr": number | null,"played": number,"points": number,"position": number | null,"runs_against": number,"runs_for": number,"team_id": string,"tied": number,"tournament_id": string,"updated_at": string,"won": number
+                    "balls_against": number,"balls_for": number,"drawn": number,"ga": number,"gd": number,"gf": number,"group_no": number | null,"lost": number,"no_result": number,"nrr": number | null,"played": number,"points": number,"position": number | null,"runs_against": number,"runs_for": number,"team_id": string,"tied": number,"tournament_id": string,"updated_at": string,"won": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "group_no"?: number | null,"balls_against"?: number,"balls_for"?: number,"drawn"?: number,"ga"?: number,"gd"?: number,"gf"?: number,"lost"?: number,"no_result"?: number,"nrr"?: number | null,"played"?: number,"points"?: number,"position"?: number | null,"runs_against"?: number,"runs_for"?: number,"team_id": string,"tied"?: number,"tournament_id": string,"updated_at"?: string,"won"?: number
+                    "balls_against"?: number,"balls_for"?: number,"drawn"?: number,"ga"?: number,"gd"?: number,"gf"?: number,"group_no"?: number | null,"lost"?: number,"no_result"?: number,"nrr"?: number | null,"played"?: number,"points"?: number,"position"?: number | null,"runs_against"?: number,"runs_for"?: number,"team_id": string,"tied"?: number,"tournament_id": string,"updated_at"?: string,"won"?: number
                   }
                   Update: {
-                    "group_no"?: number | null,"balls_against"?: number,"balls_for"?: number,"drawn"?: number,"ga"?: number,"gd"?: number,"gf"?: number,"lost"?: number,"no_result"?: number,"nrr"?: number | null,"played"?: number,"points"?: number,"position"?: number | null,"runs_against"?: number,"runs_for"?: number,"team_id"?: string,"tied"?: number,"tournament_id"?: string,"updated_at"?: string,"won"?: number
+                    "balls_against"?: number,"balls_for"?: number,"drawn"?: number,"ga"?: number,"gd"?: number,"gf"?: number,"group_no"?: number | null,"lost"?: number,"no_result"?: number,"nrr"?: number | null,"played"?: number,"points"?: number,"position"?: number | null,"runs_against"?: number,"runs_for"?: number,"team_id"?: string,"tied"?: number,"tournament_id"?: string,"updated_at"?: string,"won"?: number
                   }
                   Relationships: [
                     {
@@ -1223,14 +1223,14 @@ isOneToOne: false
                   ]
                 },"subscriptions": {
                   Row: {
-                    "cancel_at_period_end": boolean,"created_at": string,"current_period_end": string | null,"grace_until": string | null,"id": string,"plan_id": string,"razorpay_subscription_id": string | null,"status": Database["public"]['Enums']["subscription_status"],"updated_at": string,"user_id": string
+                    "cancel_at_period_end": boolean,"created_at": string,"current_period_end": string | null,"grace_until": string | null,"id": string,"plan_id": string,"razorpay_order_id": string | null,"razorpay_subscription_id": string | null,"status": Database["public"]['Enums']["subscription_status"],"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"grace_until"?: string | null,"id"?: string,"plan_id": string,"razorpay_subscription_id"?: string | null,"status"?: Database["public"]['Enums']["subscription_status"],"updated_at"?: string,"user_id": string
+                    "cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"grace_until"?: string | null,"id"?: string,"plan_id": string,"razorpay_order_id"?: string | null,"razorpay_subscription_id"?: string | null,"status"?: Database["public"]['Enums']["subscription_status"],"updated_at"?: string,"user_id": string
                   }
                   Update: {
-                    "cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"grace_until"?: string | null,"id"?: string,"plan_id"?: string,"razorpay_subscription_id"?: string | null,"status"?: Database["public"]['Enums']["subscription_status"],"updated_at"?: string,"user_id"?: string
+                    "cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"grace_until"?: string | null,"id"?: string,"plan_id"?: string,"razorpay_order_id"?: string | null,"razorpay_subscription_id"?: string | null,"status"?: Database["public"]['Enums']["subscription_status"],"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -1355,14 +1355,14 @@ isOneToOne: false
                   ]
                 },"teams": {
                   Row: {
-                    "group_no": number | null,"color_primary": string | null,"color_secondary": string | null,"created_at": string,"description": string | null,"expected_squad_size": number | null,"home_ground": string | null,"id": string,"logo_url": string | null,"manager_id": string | null,"manager_phone": string | null,"name": string,"notes": string | null,"slug": string,"squad_locked": boolean,"status": Database["public"]['Enums']["team_status"],"tournament_id": string,"updated_at": string
+                    "color_primary": string | null,"color_secondary": string | null,"created_at": string,"description": string | null,"expected_squad_size": number | null,"group_no": number | null,"home_ground": string | null,"id": string,"logo_url": string | null,"manager_id": string | null,"manager_phone": string | null,"name": string,"notes": string | null,"slug": string,"squad_locked": boolean,"status": Database["public"]['Enums']["team_status"],"tournament_id": string,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "group_no"?: number | null,"color_primary"?: string | null,"color_secondary"?: string | null,"created_at"?: string,"description"?: string | null,"expected_squad_size"?: number | null,"home_ground"?: string | null,"id"?: string,"logo_url"?: string | null,"manager_id"?: string | null,"manager_phone"?: string | null,"name": string,"notes"?: string | null,"slug": string,"squad_locked"?: boolean,"status"?: Database["public"]['Enums']["team_status"],"tournament_id": string,"updated_at"?: string
+                    "color_primary"?: string | null,"color_secondary"?: string | null,"created_at"?: string,"description"?: string | null,"expected_squad_size"?: number | null,"group_no"?: number | null,"home_ground"?: string | null,"id"?: string,"logo_url"?: string | null,"manager_id"?: string | null,"manager_phone"?: string | null,"name": string,"notes"?: string | null,"slug": string,"squad_locked"?: boolean,"status"?: Database["public"]['Enums']["team_status"],"tournament_id": string,"updated_at"?: string
                   }
                   Update: {
-                    "group_no"?: number | null,"color_primary"?: string | null,"color_secondary"?: string | null,"created_at"?: string,"description"?: string | null,"expected_squad_size"?: number | null,"home_ground"?: string | null,"id"?: string,"logo_url"?: string | null,"manager_id"?: string | null,"manager_phone"?: string | null,"name"?: string,"notes"?: string | null,"slug"?: string,"squad_locked"?: boolean,"status"?: Database["public"]['Enums']["team_status"],"tournament_id"?: string,"updated_at"?: string
+                    "color_primary"?: string | null,"color_secondary"?: string | null,"created_at"?: string,"description"?: string | null,"expected_squad_size"?: number | null,"group_no"?: number | null,"home_ground"?: string | null,"id"?: string,"logo_url"?: string | null,"manager_id"?: string | null,"manager_phone"?: string | null,"name"?: string,"notes"?: string | null,"slug"?: string,"squad_locked"?: boolean,"status"?: Database["public"]['Enums']["team_status"],"tournament_id"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -1388,6 +1388,56 @@ isOneToOne: false
       columns: ["tournament_id"]
 isOneToOne: false
       referencedRelation: "tournaments"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"tournament_assistants": {
+                  Row: {
+                    "added_by": string | null,"created_at": string,"tournament_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "added_by"?: string | null,"created_at"?: string,"tournament_id": string,"user_id": string
+                  }
+                  Update: {
+                    "added_by"?: string | null,"created_at"?: string,"tournament_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "tournament_assistants_added_by_fkey"
+      columns: ["added_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "tournament_assistants_added_by_fkey"
+      columns: ["added_by"]
+isOneToOne: false
+      referencedRelation: "public_profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "tournament_assistants_tournament_id_fkey"
+      columns: ["tournament_id"]
+isOneToOne: false
+      referencedRelation: "public_tournaments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "tournament_assistants_tournament_id_fkey"
+      columns: ["tournament_id"]
+isOneToOne: false
+      referencedRelation: "tournaments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "tournament_assistants_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "tournament_assistants_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "public_profiles"
       referencedColumns: ["id"]
     }
                   ]
@@ -1435,25 +1485,16 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"tournament_assistants": {
-                  Row: {"added_by": string | null,"created_at": string,"tournament_id": string,"user_id": string
-                  }
-                  ComputedFields: never
-                  Insert: {"added_by"?: string | null,"created_at"?: string,"tournament_id": string,"user_id": string
-                  }
-                  Update: {"added_by"?: string | null,"created_at"?: string,"tournament_id"?: string,"user_id"?: string
-                  }
-                  Relationships: []
                 },"tournaments": {
                   Row: {
-                    "group_count": number | null,"advance_per_group": number | null,"allow_player_applications": boolean,"approved_player_count": number,"approved_team_count": number,"banner_url": string | null,"cancelled_reason": string | null,"city_id": string,"contact_email": string | null,"contact_phone": string | null,"created_at": string,"custom_questions": NonNullable<Json>,"description_full": string | null,"description_short": string | null,"end_date": string | null,"entry_fee_info": string | null,"format": Database["public"]['Enums']["tournament_format"],"id": string,"individual_awards": (string)[],"league_legs": number,"logo_url": string | null,"name": string,"organizer_id": string,"player_deadline": string | null,"player_pool_cap": number | null,"playoff_style": string | null,"pricing_tier_id": string | null,"prizes": NonNullable<Json>,"published_at": string | null,"rules": NonNullable<Json>,"rules_text": string | null,"seeding_method": string,"show_contact": boolean,"slug": string,"sport_id": string,"squad_lock_deadline": string | null,"squad_max": number | null,"squad_min": number | null,"squad_mode": Database["public"]['Enums']["squad_mode"],"start_date": string | null,"status": Database["public"]['Enums']["tournament_status"],"team_count": number,"team_deadline": string | null,"team_entry": Database["public"]['Enums']["team_entry"],"third_place_match": boolean,"updated_at": string,"venue_address": string | null,"venue_name": string | null,"visibility": Database["public"]['Enums']["visibility"]
+                    "admin_hidden": boolean,"admin_notes": string | null,"advance_per_group": number | null,"allow_player_applications": boolean,"approved_player_count": number,"approved_team_count": number,"banner_url": string | null,"cancelled_reason": string | null,"city_id": string,"contact_email": string | null,"contact_phone": string | null,"created_at": string,"custom_questions": NonNullable<Json>,"description_full": string | null,"description_short": string | null,"end_date": string | null,"entry_fee_info": string | null,"format": Database["public"]['Enums']["tournament_format"],"group_count": number | null,"id": string,"individual_awards": (string)[],"league_legs": number,"logo_url": string | null,"name": string,"organizer_id": string,"player_deadline": string | null,"player_pool_cap": number | null,"playoff_style": string | null,"pricing_tier_id": string | null,"prizes": NonNullable<Json>,"published_at": string | null,"rules": NonNullable<Json>,"rules_text": string | null,"seeding_method": string,"show_contact": boolean,"slug": string,"sport_id": string,"squad_lock_deadline": string | null,"squad_max": number | null,"squad_min": number | null,"squad_mode": Database["public"]['Enums']["squad_mode"],"start_date": string | null,"status": Database["public"]['Enums']["tournament_status"],"team_count": number,"team_deadline": string | null,"team_entry": Database["public"]['Enums']["team_entry"],"third_place_match": boolean,"updated_at": string,"venue_address": string | null,"venue_name": string | null,"visibility": Database["public"]['Enums']["visibility"]
                   }
                   ComputedFields: never
                   Insert: {
-                    "group_count"?: number | null,"advance_per_group"?: number | null,"allow_player_applications"?: boolean,"approved_player_count"?: number,"approved_team_count"?: number,"banner_url"?: string | null,"cancelled_reason"?: string | null,"city_id": string,"contact_email"?: string | null,"contact_phone"?: string | null,"created_at"?: string,"custom_questions"?: NonNullable<Json>,"description_full"?: string | null,"description_short"?: string | null,"end_date"?: string | null,"entry_fee_info"?: string | null,"format"?: Database["public"]['Enums']["tournament_format"],"id"?: string,"individual_awards"?: (string)[],"league_legs"?: number,"logo_url"?: string | null,"name": string,"organizer_id": string,"player_deadline"?: string | null,"player_pool_cap"?: number | null,"playoff_style"?: string | null,"pricing_tier_id"?: string | null,"prizes"?: NonNullable<Json>,"published_at"?: string | null,"rules"?: NonNullable<Json>,"rules_text"?: string | null,"seeding_method"?: string,"show_contact"?: boolean,"slug": string,"sport_id": string,"squad_lock_deadline"?: string | null,"squad_max"?: number | null,"squad_min"?: number | null,"squad_mode"?: Database["public"]['Enums']["squad_mode"],"start_date"?: string | null,"status"?: Database["public"]['Enums']["tournament_status"],"team_count"?: number,"team_deadline"?: string | null,"team_entry"?: Database["public"]['Enums']["team_entry"],"third_place_match"?: boolean,"updated_at"?: string,"venue_address"?: string | null,"venue_name"?: string | null,"visibility"?: Database["public"]['Enums']["visibility"]
+                    "admin_hidden"?: boolean,"admin_notes"?: string | null,"advance_per_group"?: number | null,"allow_player_applications"?: boolean,"approved_player_count"?: number,"approved_team_count"?: number,"banner_url"?: string | null,"cancelled_reason"?: string | null,"city_id": string,"contact_email"?: string | null,"contact_phone"?: string | null,"created_at"?: string,"custom_questions"?: NonNullable<Json>,"description_full"?: string | null,"description_short"?: string | null,"end_date"?: string | null,"entry_fee_info"?: string | null,"format"?: Database["public"]['Enums']["tournament_format"],"group_count"?: number | null,"id"?: string,"individual_awards"?: (string)[],"league_legs"?: number,"logo_url"?: string | null,"name": string,"organizer_id": string,"player_deadline"?: string | null,"player_pool_cap"?: number | null,"playoff_style"?: string | null,"pricing_tier_id"?: string | null,"prizes"?: NonNullable<Json>,"published_at"?: string | null,"rules"?: NonNullable<Json>,"rules_text"?: string | null,"seeding_method"?: string,"show_contact"?: boolean,"slug": string,"sport_id": string,"squad_lock_deadline"?: string | null,"squad_max"?: number | null,"squad_min"?: number | null,"squad_mode"?: Database["public"]['Enums']["squad_mode"],"start_date"?: string | null,"status"?: Database["public"]['Enums']["tournament_status"],"team_count"?: number,"team_deadline"?: string | null,"team_entry"?: Database["public"]['Enums']["team_entry"],"third_place_match"?: boolean,"updated_at"?: string,"venue_address"?: string | null,"venue_name"?: string | null,"visibility"?: Database["public"]['Enums']["visibility"]
                   }
                   Update: {
-                    "group_count"?: number | null,"advance_per_group"?: number | null,"allow_player_applications"?: boolean,"approved_player_count"?: number,"approved_team_count"?: number,"banner_url"?: string | null,"cancelled_reason"?: string | null,"city_id"?: string,"contact_email"?: string | null,"contact_phone"?: string | null,"created_at"?: string,"custom_questions"?: NonNullable<Json>,"description_full"?: string | null,"description_short"?: string | null,"end_date"?: string | null,"entry_fee_info"?: string | null,"format"?: Database["public"]['Enums']["tournament_format"],"id"?: string,"individual_awards"?: (string)[],"league_legs"?: number,"logo_url"?: string | null,"name"?: string,"organizer_id"?: string,"player_deadline"?: string | null,"player_pool_cap"?: number | null,"playoff_style"?: string | null,"pricing_tier_id"?: string | null,"prizes"?: NonNullable<Json>,"published_at"?: string | null,"rules"?: NonNullable<Json>,"rules_text"?: string | null,"seeding_method"?: string,"show_contact"?: boolean,"slug"?: string,"sport_id"?: string,"squad_lock_deadline"?: string | null,"squad_max"?: number | null,"squad_min"?: number | null,"squad_mode"?: Database["public"]['Enums']["squad_mode"],"start_date"?: string | null,"status"?: Database["public"]['Enums']["tournament_status"],"team_count"?: number,"team_deadline"?: string | null,"team_entry"?: Database["public"]['Enums']["team_entry"],"third_place_match"?: boolean,"updated_at"?: string,"venue_address"?: string | null,"venue_name"?: string | null,"visibility"?: Database["public"]['Enums']["visibility"]
+                    "admin_hidden"?: boolean,"admin_notes"?: string | null,"advance_per_group"?: number | null,"allow_player_applications"?: boolean,"approved_player_count"?: number,"approved_team_count"?: number,"banner_url"?: string | null,"cancelled_reason"?: string | null,"city_id"?: string,"contact_email"?: string | null,"contact_phone"?: string | null,"created_at"?: string,"custom_questions"?: NonNullable<Json>,"description_full"?: string | null,"description_short"?: string | null,"end_date"?: string | null,"entry_fee_info"?: string | null,"format"?: Database["public"]['Enums']["tournament_format"],"group_count"?: number | null,"id"?: string,"individual_awards"?: (string)[],"league_legs"?: number,"logo_url"?: string | null,"name"?: string,"organizer_id"?: string,"player_deadline"?: string | null,"player_pool_cap"?: number | null,"playoff_style"?: string | null,"pricing_tier_id"?: string | null,"prizes"?: NonNullable<Json>,"published_at"?: string | null,"rules"?: NonNullable<Json>,"rules_text"?: string | null,"seeding_method"?: string,"show_contact"?: boolean,"slug"?: string,"sport_id"?: string,"squad_lock_deadline"?: string | null,"squad_max"?: number | null,"squad_min"?: number | null,"squad_mode"?: Database["public"]['Enums']["squad_mode"],"start_date"?: string | null,"status"?: Database["public"]['Enums']["tournament_status"],"team_count"?: number,"team_deadline"?: string | null,"team_entry"?: Database["public"]['Enums']["team_entry"],"third_place_match"?: boolean,"updated_at"?: string,"venue_address"?: string | null,"venue_name"?: string | null,"visibility"?: Database["public"]['Enums']["visibility"]
                   }
                   Relationships: [
                     {
@@ -1607,7 +1648,7 @@ isOneToOne: false
                   ]
                 },"public_tournaments": {
                   Row: {
-                    "allow_player_applications": boolean,"approved_player_count": number,"approved_team_count": number,"banner_url": string | null,"cancelled_reason": string | null,"city_id": string,"city_name": string,"city_slug": string,"contact_email": string | null,"contact_phone": string | null,"custom_questions": NonNullable<Json>,"description_full": string | null,"description_short": string | null,"end_date": string | null,"entry_fee_info": string | null,"format": Database["public"]['Enums']["tournament_format"],"id": string,"individual_awards": (string)[],"league_legs": number,"logo_url": string | null,"name": string,"organizer_avatar": string | null,"organizer_id": string,"organizer_name": string | null,"player_deadline": string | null,"playoff_style": string | null,"prizes": NonNullable<Json>,"published_at": string | null,"rules": NonNullable<Json>,"rules_text": string | null,"slug": string,"sport_id": string,"sport_name": string,"sport_slug": string,"squad_max": number | null,"squad_min": number | null,"squad_mode": Database["public"]['Enums']["squad_mode"],"start_date": string | null,"status": Database["public"]['Enums']["tournament_status"],"team_count": number,"team_deadline": string | null,"team_entry": Database["public"]['Enums']["team_entry"],"third_place_match": boolean,"venue_address": string | null,"venue_name": string | null,"visibility": Database["public"]['Enums']["visibility"]
+                    "advance_per_group": number | null,"allow_player_applications": boolean,"approved_player_count": number,"approved_team_count": number,"banner_url": string | null,"cancelled_reason": string | null,"city_id": string,"city_name": string,"city_slug": string,"contact_email": string | null,"contact_phone": string | null,"custom_questions": NonNullable<Json>,"description_full": string | null,"description_short": string | null,"end_date": string | null,"entry_fee_info": string | null,"format": Database["public"]['Enums']["tournament_format"],"group_count": number | null,"id": string,"individual_awards": (string)[],"league_legs": number,"logo_url": string | null,"name": string,"organizer_avatar": string | null,"organizer_id": string,"organizer_name": string | null,"player_deadline": string | null,"playoff_style": string | null,"prizes": NonNullable<Json>,"published_at": string | null,"rules": NonNullable<Json>,"rules_text": string | null,"slug": string,"sport_id": string,"sport_name": string,"sport_slug": string,"squad_max": number | null,"squad_min": number | null,"squad_mode": Database["public"]['Enums']["squad_mode"],"start_date": string | null,"status": Database["public"]['Enums']["tournament_status"],"team_count": number,"team_deadline": string | null,"team_entry": Database["public"]['Enums']["team_entry"],"third_place_match": boolean,"venue_address": string | null,"venue_name": string | null,"visibility": Database["public"]['Enums']["visibility"]
                   }
                   ComputedFields: never
                   Relationships: [
@@ -1761,7 +1802,10 @@ isOneToOne: false
                            },
 "_require_organizer":
 { Args: { "p_tid": string }; Returns: {
-              "allow_player_applications": boolean,
+              "admin_hidden": boolean,
+"admin_notes": string | null,
+"advance_per_group": number | null,
+"allow_player_applications": boolean,
 "approved_player_count": number,
 "approved_team_count": number,
 "banner_url": string | null,
@@ -1776,6 +1820,67 @@ isOneToOne: false
 "end_date": string | null,
 "entry_fee_info": string | null,
 "format": Database["public"]['Enums']["tournament_format"],
+"group_count": number | null,
+"id": string,
+"individual_awards": (string)[],
+"league_legs": number,
+"logo_url": string | null,
+"name": string,
+"organizer_id": string,
+"player_deadline": string | null,
+"player_pool_cap": number | null,
+"playoff_style": string | null,
+"pricing_tier_id": string | null,
+"prizes": NonNullable<Json>,
+"published_at": string | null,
+"rules": NonNullable<Json>,
+"rules_text": string | null,
+"seeding_method": string,
+"show_contact": boolean,
+"slug": string,
+"sport_id": string,
+"squad_lock_deadline": string | null,
+"squad_max": number | null,
+"squad_min": number | null,
+"squad_mode": Database["public"]['Enums']["squad_mode"],
+"start_date": string | null,
+"status": Database["public"]['Enums']["tournament_status"],
+"team_count": number,
+"team_deadline": string | null,
+"team_entry": Database["public"]['Enums']["team_entry"],
+"third_place_match": boolean,
+"updated_at": string,
+"venue_address": string | null,
+"venue_name": string | null,
+"visibility": Database["public"]['Enums']["visibility"]
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "tournaments"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"_require_owner":
+{ Args: { "p_tid": string }; Returns: {
+              "admin_hidden": boolean,
+"admin_notes": string | null,
+"advance_per_group": number | null,
+"allow_player_applications": boolean,
+"approved_player_count": number,
+"approved_team_count": number,
+"banner_url": string | null,
+"cancelled_reason": string | null,
+"city_id": string,
+"contact_email": string | null,
+"contact_phone": string | null,
+"created_at": string,
+"custom_questions": NonNullable<Json>,
+"description_full": string | null,
+"description_short": string | null,
+"end_date": string | null,
+"entry_fee_info": string | null,
+"format": Database["public"]['Enums']["tournament_format"],
+"group_count": number | null,
 "id": string,
 "individual_awards": (string)[],
 "league_legs": number,
@@ -1818,8 +1923,17 @@ isOneToOne: false
 "accept_team_invite":
 { Args: { "p_code": string }; Returns: string
                            },
+"add_assistant":
+{ Args: { "p_tournament_id": string,"p_username": string }; Returns: undefined
+                           },
 "add_squad_player":
 { Args: { "p_team_id": string,"p_user_id": string }; Returns: string
+                           },
+"admin_dashboard":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"admin_find_user_by_email":
+{ Args: { "p_email": string }; Returns: string
                            },
 "announce_lot":
 { Args: { "p_kind": string,"p_lot_id": string }; Returns: undefined
@@ -1881,6 +1995,9 @@ isOneToOne: false
 "is_tournament_organizer":
 { Args: { "tid": string }; Returns: boolean
                            },
+"is_tournament_owner":
+{ Args: { "tid": string }; Returns: boolean
+                           },
 "lock_pool":
 { Args: { "p_tid": string }; Returns: undefined
                            },
@@ -1923,6 +2040,12 @@ isOneToOne: false
 "recompute_standings":
 { Args: { "p_tournament_id": string }; Returns: undefined
                            },
+"record_simple_sale":
+{ Args: { "p_player_id": string,"p_price": number,"p_team_id": string,"p_tid": string }; Returns: undefined
+                           },
+"remove_assistant":
+{ Args: { "p_tournament_id": string,"p_user_id": string }; Returns: undefined
+                           },
 "remove_squad_player":
 { Args: { "p_member_id": string }; Returns: undefined
                            },
@@ -1931,6 +2054,9 @@ isOneToOne: false
                            },
 "report_content":
 { Args: { "p_reason": string,"p_target_id": string,"p_target_type": string }; Returns: string
+                           },
+"restore_expired_suspensions":
+{ Args: Record<PropertyKey, never>; Returns: number
                            },
 "resume_auction":
 { Args: { "p_tid": string }; Returns: undefined
@@ -1967,6 +2093,9 @@ isOneToOne: false
                            },
 "tournament_is_published":
 { Args: { "tid": string }; Returns: boolean
+                           },
+"transfer_tournament":
+{ Args: { "p_tournament_id": string,"p_username": string }; Returns: undefined
                            },
 "undo_last_bid":
 { Args: { "p_lot_id": string,"p_reason": string }; Returns: undefined

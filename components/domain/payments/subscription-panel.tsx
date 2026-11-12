@@ -4,11 +4,10 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { toast } from "@/components/ui/toast";
 import { formatDate, formatINR } from "@/lib/format";
 import { pollUntil } from "@/lib/payments/poll";
-import { openSubscriptionCheckout } from "@/lib/razorpay/checkout";
+import { openOrderCheckout } from "@/lib/razorpay/checkout";
 import type { SubscriptionView } from "@/lib/payments/eligibility";
 
 export interface PlanInfo {
@@ -22,8 +21,7 @@ export function SubscriptionPanel({ view, plan, periodEnd, graceUntil, prefill }
   const router = useRouter();
   const [busy, setBusy] = React.useState(false);
   const [confirming, setConfirming] = React.useState(false);
-  const [cancelOpen, setCancelOpen] = React.useState(false);
-  const [message, setMessage] = React.useState<{ tone: "error" | "info"; text: string } | null>(null);
+    const [message, setMessage] = React.useState<{ tone: "error" | "info"; text: string } | null>(null);
   const inFlight = React.useRef(false);
 
   async function waitForActive() {
@@ -36,7 +34,7 @@ export function SubscriptionPanel({ view, plan, periodEnd, graceUntil, prefill }
     });
     setConfirming(false);
     if (outcome === "done") {
-      toast({ title: "Subscription active" });
+      toast({ title: "Pass active for 30 days" });
       router.refresh();
     } else {
       setMessage({ tone: "info", text: "We're confirming your payment. This can take a few minutes. You don't need to pay again." });
@@ -52,7 +50,7 @@ export function SubscriptionPanel({ view, plan, periodEnd, graceUntil, prefill }
       const res = await fetch("/api/payments/subscription", { method: "POST" });
       const j = await res.json();
       if (!res.ok) return setMessage({ tone: "error", text: j.message ?? "Something went wrong. You haven't been charged." });
-      const result = await openSubscriptionCheckout({ subscriptionId: j.subscriptionId, keyId: j.keyId, prefill });
+      const result = await openOrderCheckout({ orderId: j.orderId, amount: j.amount, keyId: j.keyId, name: "Player pass (30 days)", prefill });
       if (result === "dismissed") return;
       if (result === "failed") return setMessage({ tone: "error", text: "Payment didn't go through. You haven't been charged. Try again." });
       await waitForActive();
@@ -64,39 +62,28 @@ export function SubscriptionPanel({ view, plan, periodEnd, graceUntil, prefill }
     }
   }
 
-  async function cancel() {
-    const res = await fetch("/api/payments/subscription/cancel", { method: "POST" });
-    const j = await res.json();
-    if (!res.ok) {
-      setMessage({ tone: "error", text: j.message ?? "Couldn't cancel. Try again." });
-      return;
-    }
-    toast({ title: "Subscription will end at the end of the period" });
-    router.refresh();
-  }
-
-  const price = plan ? `${formatINR(plan.amount_paise)} / month` : null;
-  const startLabel = view === "cancelling" ? "Resume subscription" : view === "past_due" ? "Fix payment" : "Start subscription";
+  const price = plan ? `${formatINR(plan.amount_paise)} for 30 days` : null;
+  const startLabel = view === "expired" ? "Renew for 30 days" : "Pay for 30 days";
 
   return (
-    <section className="rounded-card border border-line bg-card p-6" aria-label="Subscription status">
+    <section className="rounded-card border border-line bg-card p-6" aria-label="Player pass status">
       {view === "past_due" && (
         <div role="alert" className="mb-4 rounded-input border border-danger/40 bg-danger/10 p-3 text-sm text-danger">
           Your last payment failed. Update your payment{graceUntil ? ` before ${formatDate(graceUntil)}` : ""} to keep applying to tournaments.
         </div>
       )}
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="font-display text-2xl font-bold">{plan?.name ?? "Player subscription"}</h2>
+        <h2 className="font-display text-2xl font-bold">{plan?.name ?? "Player pass"}</h2>
         {view === "active" && <Badge variant="open">Active</Badge>}
         {view === "cancelling" && <Badge variant="draft">Ends {periodEnd ? formatDate(periodEnd) : "soon"}</Badge>}
         {view === "past_due" && <Badge variant="cancelled">Payment failed</Badge>}
         {view === "expired" && <Badge variant="neutral">Expired</Badge>}
-        {view === "none" && <Badge variant="neutral">Not subscribed</Badge>}
+        {view === "none" && <Badge variant="neutral">No active pass</Badge>}
       </div>
       {price && <p className="mt-1 text-muted">{price}</p>}
-      {view === "active" && periodEnd && <p className="mt-2 text-sm">Renews on <strong>{formatDate(periodEnd)}</strong>.</p>}
+      {view === "active" && periodEnd && <p className="mt-2 text-sm">Valid until <strong>{formatDate(periodEnd)}</strong>. It does not renew by itself.</p>}
       {view === "cancelling" && periodEnd && <p className="mt-2 text-sm">Cancelled. You can still apply until <strong>{formatDate(periodEnd)}</strong>. Resume to keep going without a gap.</p>}
-      {view === "expired" && <p className="mt-2 text-sm">Your subscription has ended. Your registrations and squads are untouched, but you can&apos;t apply to new tournaments until you subscribe again.</p>}
+      {view === "expired" && <p className="mt-2 text-sm">Your pass has ended. Your registrations and squads are untouched, but you can&apos;t apply to new tournaments until you pay again.</p>}
 
       <div className="mt-5 flex flex-wrap gap-2">
         {view !== "active" && (
@@ -104,25 +91,11 @@ export function SubscriptionPanel({ view, plan, periodEnd, graceUntil, prefill }
             {startLabel}
           </Button>
         )}
-        {view === "active" && (
-          <Button variant="secondary" onClick={() => setCancelOpen(true)}>
-            Cancel subscription
-          </Button>
-        )}
       </div>
       <div aria-live="polite" className="mt-3 text-sm">
         {confirming && <p>Confirming payment… Please don&apos;t close this page.</p>}
         {message && <p role={message.tone === "error" ? "alert" : "status"} className={message.tone === "error" ? "text-danger" : "text-muted"}>{message.text}</p>}
       </div>
-      <ConfirmDialog
-        open={cancelOpen}
-        onOpenChange={setCancelOpen}
-        title="Cancel your subscription?"
-        description={`You can keep applying until ${periodEnd ? formatDate(periodEnd) : "the end of this period"}. Existing registrations stay valid.`}
-        confirmLabel="Cancel subscription"
-        variant="destructive"
-        onConfirm={cancel}
-      />
     </section>
   );
 }

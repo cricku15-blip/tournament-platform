@@ -90,7 +90,7 @@ export function TournamentActions({
             </Button>
           ) : viewer.eligibility?.reason === "subscription_required" ? (
             <Button asChild>
-              <Link href="/subscription">Start subscription</Link>
+              <Link href="/subscription">Get 30-day pass</Link>
             </Button>
           ) : viewer.eligibility?.reason === "already_applied" ? (
             <Button variant="secondary" disabled>

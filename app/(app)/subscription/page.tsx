@@ -10,11 +10,11 @@ import { formatDate, formatINR } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Subscription" };
 
-const COVERS = ["Apply to any tournament or auction in your city", "A public player profile with your career stats", "Cancel any time. You keep access until the period ends"];
+const COVERS = ["Apply to any tournament or auction in your city", "A public player profile with your career stats", "One payment gives 30 days of access. No auto-renew, nothing is charged again unless you pay"];
 const FAQ = [
   ["What does the subscription cover?", "It lets you apply to tournaments and auctions in your city and keeps your public profile and stats."],
-  ["What happens if I cancel?", "You keep access until the end of the paid period. Your registrations, pool entries and squads stay exactly as they are."],
-  ["What if a payment fails?", "You get a short grace period to fix it. During that time you can still apply. After it, new applications are paused until you pay."],
+  ["What happens after 30 days?", "The pass simply ends. Your registrations, pool entries and squads stay exactly as they are. Pay again whenever you want to apply to something new."],
+  ["Will I be charged automatically?", "No. There is no auto-debit. You only pay when you choose to."],
   ["Is entry money part of this?", "No. Tournament entry fees and prizes are handled by the organizer outside GroundWar."],
 ];
 
@@ -35,7 +35,7 @@ export default async function SubscriptionPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-      <h1 className="font-display text-3xl font-bold">Subscription</h1>
+      <h1 className="font-display text-3xl font-bold">Player pass</h1>
       <SubscriptionPanel view={view} plan={planInfo} periodEnd={sub.data?.current_period_end ?? null} graceUntil={sub.data?.grace_until ?? null} prefill={{ name: profile?.full_name ?? undefined, email: user.email ?? undefined }} />
 
       <section className="rounded-card border border-line bg-card p-6" aria-label="What it covers">

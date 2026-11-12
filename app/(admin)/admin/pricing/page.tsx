@@ -49,11 +49,11 @@ export default async function AdminPricing() {
         </DataTable>
       </Panel>
 
-      <Panel title="Player plan (monthly)">
+      <Panel title="Player pass (30 days)">
         {p ? (
           <dl className="grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
             <div><dt className="text-muted">Name</dt><dd className="font-semibold">{p.name}</dd></div>
-            <div><dt className="text-muted">Price / month</dt><dd className="font-semibold">{formatINR(p.amount_paise)}</dd></div>
+            <div><dt className="text-muted">Price / 30 days</dt><dd className="font-semibold">{formatINR(p.amount_paise)}</dd></div>
             <div><dt className="text-muted">Grace days</dt><dd className="font-semibold">{p.grace_days}</dd></div>
             <div><dt className="text-muted">Version</dt><dd className="font-semibold">v{p.version}{p.razorpay_plan_id ? "" : " (Razorpay plan is created on the next purchase)"}</dd></div>
           </dl>
@@ -63,7 +63,7 @@ export default async function AdminPricing() {
             label="Change plan" variant="primary" description="Creates a new version. Existing subscribers keep their current price; new purchases use this one."
             fields={[
               { name: "name", label: "Name", required: true, defaultValue: p?.name ?? "Player monthly" },
-              { name: "amountRupees", label: "Price per month in rupees", type: "number", required: true, defaultValue: p ? String(p.amount_paise / 100) : "" },
+              { name: "amountRupees", label: "Price for 30 days in rupees", type: "number", required: true, defaultValue: p ? String(p.amount_paise / 100) : "" },
               { name: "graceDays", label: "Grace days after a failed payment", type: "number", defaultValue: String(p?.grace_days ?? 3) },
               { name: "description", label: "Short description", defaultValue: p?.description ?? "" },
               { name: "benefits", label: "Benefits (one per line)", type: "textarea", defaultValue: Array.isArray(p?.benefits) ? (p?.benefits as string[]).join("\n") : "" },
